@@ -1,100 +1,36 @@
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 
-const yesEntry = ['Empty'];
-const maybeEntry = ['Empty'];
-const noEntry = ['Empty'];
+
+const yesEntry = ['-'];
+const maybeEntry = ['-'];
+const noEntry = ['-'];
+var x = 0;
+var y = 0;
+var z = 0;
 
 module.exports = {
 	name: 'interactionCreate',
 	execute(interaction) {
 		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+		const userid = (`${interaction.user}`);
+
+		console.log("Outside" + userid);
 
 
-		const mainEmbed = new MessageEmbed()
-			.setThumbnail('https://imgur.com/vUG7MDU.png')
-			.setColor('0xFF6F00')
-			.setTitle('10 Man')
-			.setURL('https://10man.commoncrayon.com/')
-			.setDescription('Join a 10 Man!')
-			.addFields(
-				{ name: 'Time:', value: '20:30' },
-				{ name: 'Countdown:', value: 'number' },
-                { name: 'Yes: (0)', value: ' ' + yesEntry, inline: true},
-                { name: 'Maybe: (0)', value: ' ' + maybeEntry, inline: true },
-                { name: 'No: (0)', value: ' ' + noEntry, inline: true },
-                )
-			.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
-
-		
-		// Buttons
-		const buttons = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('yes')
-					.setLabel('Yes')
-					.setStyle('SUCCESS')
-					.setEmoji('👍'),
-
-				new MessageButton()
-				.setCustomId('maybe')
-				.setLabel('Maybe')
-				.setStyle('PRIMARY')
-				.setEmoji('🤷'),
-
-				new MessageButton()
-				.setCustomId('no')
-				.setLabel('No')
-				.setStyle('DANGER')
-				.setEmoji('👎'),
-			);
-
-
-
-		const collector = interaction.channel.createMessageComponentCollector({ time: 15000 });
+		const collector = interaction.channel.createMessageComponentCollector();
 
         collector.on('collect', async i => {
-            if (i.customId === 'yes') {
-				await i.deferUpdate();
-				yesEntry.push(`${interaction.user.tag}`); // Append to List
-				const mainEmbed = new MessageEmbed()
-					.setThumbnail('https://imgur.com/vUG7MDU.png')
-					.setColor('0xFF6F00')
-					.setTitle('10 Man')
-					.setURL('https://10man.commoncrayon.com/')
-					.setDescription('Join a 10 Man!')
-					.addFields(
-						{ name: 'Time:', value: '20:30' },
-						{ name: 'Countdown:', value: 'number' },
-						{ name: 'Yes: (0)', value: ' ' + yesEntry, inline: true},
-						{ name: 'Maybe: (0)', value: ' ' + maybeEntry, inline: true },
-						{ name: 'No: (0)', value: ' ' + noEntry, inline: true },
-						)
-					.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+			console.log("Inside" + userid);
 
-				await i.editReply({content: '@10-man', 
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
-            }
-
-            if (i.customId === 'maybe') {
+            if (i.customId.includes("yes") ) {
 				await i.deferUpdate();
-				maybeEntry.push(`${interaction.user.tag}`);
-				
-				const mainEmbed = new MessageEmbed()
-					.setThumbnail('https://imgur.com/vUG7MDU.png')
-					.setColor('0xFF6F00')
-					.setTitle('10 Man')
-					.setURL('https://10man.commoncrayon.com/')
-					.setDescription('Join a 10 Man!')
-					.addFields(
-						{ name: 'Time:', value: '20:30' },
-						{ name: 'Countdown:', value: 'number' },
-						{ name: 'Yes: (0)', value: ' ' + yesEntry, inline: true},
-						{ name: 'Maybe: (0)', value: ' ' + maybeEntry, inline: true },
-						{ name: 'No: (0)', value: ' ' + noEntry, inline: true },
-						)
-					.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+				yesEntry.push(userid);
+				theRemovedElement == 1
+				var theRemovedElement = yesEntry.shift()
+
+
+				let mainEmbed = createEmbed(yesEntry, maybeEntry, noEntry); 
+				let buttons = createButton(); 
 				
 				await i.editReply({content: '@10-man', 
 					embeds: [mainEmbed], 
@@ -102,25 +38,32 @@ module.exports = {
 				});
             }
 
-            if (i.customId === 'no') {
+            else if (i.customId.includes("maybe") ) {
 				await i.deferUpdate();
-				noEntry.push(`${interaction.user.tag}`);
+				maybeEntry.push(userid);
+				theRemovedElement == 1
+				var theRemovedElement = maybeEntry.shift()
 
-				const mainEmbed = new MessageEmbed()
-					.setThumbnail('https://imgur.com/vUG7MDU.png')
-					.setColor('0xFF6F00')
-					.setTitle('10 Man')
-					.setURL('https://10man.commoncrayon.com/')
-					.setDescription('Join a 10 Man!')
-					.addFields(
-						{ name: 'Time:', value: '20:30' },
-						{ name: 'Countdown:', value: 'number' },
-						{ name: 'Yes: (0)', value: ' ' + yesEntry, inline: true},
-						{ name: 'Maybe: (0)', value: ' ' + maybeEntry, inline: true },
-						{ name: 'No: (0)', value: ' ' + noEntry, inline: true },
-						)
-					.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
-					
+
+				let mainEmbed = createEmbed(yesEntry, maybeEntry, noEntry); 
+				let buttons = createButton(); 
+				
+				await i.editReply({content: '@10-man', 
+					embeds: [mainEmbed], 
+					components: [buttons],
+				});
+            }
+
+            else if (i.customId.includes("no") ) {
+				await i.deferUpdate();
+				noEntry.push(userid);
+				theRemovedElement == 1
+				var theRemovedElement = noEntry.shift()
+
+
+				let mainEmbed = createEmbed(yesEntry, maybeEntry, noEntry); 
+				let buttons = createButton(); 
+				
 				await i.editReply({content: '@10-man', 
 					embeds: [mainEmbed], 
 					components: [buttons],
@@ -132,3 +75,51 @@ module.exports = {
 	},
 };
 
+
+function createEmbed(yesEntry, maybeEntry, noEntry) {
+	const mainEmbed = new MessageEmbed()
+	.setThumbnail('https://imgur.com/vUG7MDU.png')
+	.setColor('0xFF6F00')
+	.setTitle('10 Man')
+	.setURL('https://10man.commoncrayon.com/')
+	.setDescription('Join a 10 Man!')
+	.addFields(
+		{ name: 'Time:', value: '20:30' },
+		{ name: 'Countdown:', value: 'number' },
+		{ name: 'Yes: (' + yesEntry.length + ')', value: ' ' + yesEntry, inline: true},
+		{ name: 'Maybe: (' + maybeEntry.length + ')', value: ' ' + maybeEntry, inline: true },
+		{ name: 'No: (' + noEntry.length + ')', value: ' ' + noEntry, inline: true },
+		)
+	.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+	return mainEmbed;
+}
+
+
+function createButton() {
+
+	var yesID = String("yes" + x++);
+	var maybeID = String("maybe" + y++);
+	var noID = String("no" + z++);
+
+	const buttons = new MessageActionRow()
+		.addComponents(
+			new MessageButton()
+				.setCustomId(yesID)
+				.setLabel('Yes')
+				.setStyle('SUCCESS')
+				.setEmoji('👍'),
+
+			new MessageButton()
+			.setCustomId(maybeID)
+			.setLabel('Maybe')
+			.setStyle('PRIMARY')
+			.setEmoji('🤷'),
+
+			new MessageButton()
+			.setCustomId(noID)
+			.setLabel('No')
+			.setStyle('DANGER')
+			.setEmoji('👎'),
+		);
+	return buttons;
+}

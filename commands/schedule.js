@@ -5,7 +5,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedule')
 		.setDescription('Schedules 10man!'),
-        
+			
 
 
 	async execute(interaction) {
@@ -19,9 +19,9 @@ module.exports = {
 			.addFields(
 				{ name: 'Time:', value: '20:30' },
 				{ name: 'Countdown:', value: 'number' },
-                { name: 'Yes: (0)', value: 'number' , inline: true},
-                { name: 'Maybe: (0)', value: 'number', inline: true },
-                { name: 'No: (0)', value: 'number', inline: true },
+                { name: 'Yes: (0)', value: 'None' , inline: true},
+                { name: 'Maybe: (0)', value: 'None', inline: true },
+                { name: 'No: (0)', value: 'None', inline: true },
                 )
 			.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
 
