@@ -5,7 +5,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedule')
 		.setDescription('Schedules 10man!')
-		.addNumberOption(option => option.setName('num').setDescription('Enter a number').setRequired(true)),
+		.addStringOption(option => option.setName('time').setDescription('Enter a Time').setRequired(true)),
 
 
 	async execute(interaction) {
@@ -18,8 +18,8 @@ module.exports = {
 			.setURL('https://10man.commoncrayon.com/')
 			.setDescription('Join a 10 Man!')
 			.addFields(
-				{ name: 'Time:', value: interaction.options.getNumber('num')},
-				{ name: 'Countdown:', value: 'number' },
+				{ name: 'Time:', value: interaction.options.getString('time')},
+				{ name: 'Countdown:', value: 'todo' },
                 { name: 'Yes:', value: 'Empty' , inline: true},
                 { name: 'Maybe:', value: 'Empty', inline: true },
                 { name: 'No:', value: 'Empty', inline: true },

@@ -11,15 +11,20 @@ module.exports = {
 	execute(interaction) {
 		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
 
-		
-		//const integer = interaction.options.getInteger('time')
+		try {
+			timeScheduled = interaction.options.getString('time');
+		}
+		catch (e) {}
 
-		
+		console.log(timeScheduled);
+
+
 		user = (`${interaction.user}`)	// Captures user's name
 
 		const collector = interaction.channel.createMessageComponentCollector();
 
         collector.on('collect', async i => {
+
 
             if (i.customId === "yes" ) {
 				await i.deferUpdate();
@@ -27,7 +32,7 @@ module.exports = {
 				yesEntry.push(user);
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString); 
+				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 				let buttons = createButton(); 
 				
 				await i.editReply({content: '<@&843565546004021297>', 
@@ -42,7 +47,7 @@ module.exports = {
 				maybeEntry.push(user);
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString); 
+				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 				let buttons = createButton(); 
 				
 				await i.editReply({content: '<@&843565546004021297>', 
@@ -57,7 +62,7 @@ module.exports = {
 				noEntry.push(user);
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString); 
+				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 				let buttons = createButton(); 
 				
 				await i.editReply({content: '<@&843565546004021297>', 
@@ -72,7 +77,7 @@ module.exports = {
 };
 
 
-function createEmbed(yesEntry, maybeEntry, noEntry) {
+function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 	const mainEmbed = new MessageEmbed()
 	//.setThumbnail('https://imgur.com/vUG7MDU.png')
 	.setColor('0xFF6F00')
@@ -80,8 +85,8 @@ function createEmbed(yesEntry, maybeEntry, noEntry) {
 	.setURL('https://10man.commoncrayon.com/')
 	.setDescription('Join a 10 Man!')
 	.addFields(
-		{ name: 'Time:', value: '20:30' },
-		{ name: 'Countdown:', value: "Number"},
+		{ name: 'Time:', value: timeScheduled },
+		{ name: 'Countdown:', value: 'todo'},
 		{ name: 'Yes: ', value: yesEntry, inline: true},
 		{ name: 'Maybe: ', value: maybeEntry, inline: true },
 		{ name: 'No: ', value: noEntry, inline: true },
