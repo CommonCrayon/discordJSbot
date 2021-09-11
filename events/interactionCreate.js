@@ -4,9 +4,6 @@ const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const yesEntry = [];
 const maybeEntry = [];
 const noEntry = [];
-var x = 0;	// Counter For yesEntry
-var y = 0;	// Counter For maybeEntry
-var z = 0;	// Counter For noEntry
 
 
 module.exports = {
@@ -14,154 +11,56 @@ module.exports = {
 	execute(interaction) {
 		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
 
+		
+		//const integer = interaction.options.getInteger('time')
+
+		
 		user = (`${interaction.user}`)	// Captures user's name
 
 		const collector = interaction.channel.createMessageComponentCollector();
 
         collector.on('collect', async i => {
 
-            if (i.customId.includes("yes") ) {
+            if (i.customId === "yes" ) {
 				await i.deferUpdate();
 
 				yesEntry.push(user);
 
-				//NEEDS TO BE A FUNCTION================================
-				// For Yes
-				if (yesEntry.length == 0){
-					yesString = "Empty";
-				}
-				else {
-					yesString = "";
-					for (var l = 0; l < yesEntry.length; l++) {
-						yesString = (yesString + yesEntry[l] + '\n');
-					}
-				}
-
-				// For Maybe
-				if (maybeEntry.length == 0){
-					maybeString = "Empty";
-				}
-				else {
-					maybeString = "";
-					for (var l = 0; l < maybeEntry.length; l++) {
-						maybeString = (maybeString + maybeEntry[l] + '\n');
-					}
-				}
-
-				// For No
-				if (noEntry.length == 0){
-					noString = "Empty";
-				}
-				else {
-					noString = "";
-					for (var l = 0; l < noEntry.length; l++) {
-						noString = (noString + noEntry[l] + '\n');
-					}
-				}
-				//NEEDS TO BE A FUNCTION================================
-
+				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, maybeString, noString); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: '@10-man', 
+				await i.editReply({content: '<@&843565546004021297>', 
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
             }
 
-            else if (i.customId.includes("maybe") ) {
+            else if (i.customId === "maybe" ) {
 				await i.deferUpdate();
 
 				maybeEntry.push(user);
 
-				//NEEDS TO BE A FUNCTION================================
-				// For Yes
-				if (yesEntry.length == 0){
-					yesString = "Empty";
-				}
-				else {
-					yesString = "";
-					for (var l = 0; l < yesEntry.length; l++) {
-						yesString = (yesString + yesEntry[l] + '\n');
-					}
-				}
-
-				// For Maybe
-				if (maybeEntry.length == 0){
-					maybeString = "Empty";
-				}
-				else {
-					maybeString = "";
-					for (var l = 0; l < maybeEntry.length; l++) {
-						maybeString = (maybeString + maybeEntry[l] + '\n');
-					}
-				}
-
-				// For No
-				if (noEntry.length == 0){
-					noString = "Empty";
-				}
-				else {
-					noString = "";
-					for (var l = 0; l < noEntry.length; l++) {
-						noString = (noString + noEntry[l] + '\n');
-					}
-				}
-				//NEEDS TO BE A FUNCTION================================
-
+				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, maybeString, noString); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: '@10-man', 
+				await i.editReply({content: '<@&843565546004021297>', 
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
             }
 
-            else if (i.customId.includes("no") ) {
+            else if (i.customId === "no") {
 				await i.deferUpdate();
 
 				noEntry.push(user);
 
-				//NEEDS TO BE A FUNCTION================================
-				// For Yes
-				if (yesEntry.length == 0){
-					yesString = "Empty";
-				}
-				else {
-					yesString = "";
-					for (var l = 0; l < yesEntry.length; l++) {
-						yesString = (yesString + yesEntry[l] + '\n');
-					}
-				}
-
-				// For Maybe
-				if (maybeEntry.length == 0){
-					maybeString = "Empty";
-				}
-				else {
-					maybeString = "";
-					for (var l = 0; l < maybeEntry.length; l++) {
-						maybeString = (maybeString + maybeEntry[l] + '\n');
-					}
-				}
-
-				// For No
-				if (noEntry.length == 0){
-					noString = "Empty";
-				}
-				else {
-					noString = "";
-					for (var l = 0; l < noEntry.length; l++) {
-						noString = (noString + noEntry[l] + '\n');
-					}
-				}
-				//NEEDS TO BE A FUNCTION================================
-
+				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, maybeString, noString); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: '@10-man', 
+				await i.editReply({content: '<@&843565546004021297>', 
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -182,7 +81,7 @@ function createEmbed(yesEntry, maybeEntry, noEntry) {
 	.setDescription('Join a 10 Man!')
 	.addFields(
 		{ name: 'Time:', value: '20:30' },
-		{ name: 'Countdown:', value: 'number' },
+		{ name: 'Countdown:', value: "Number"},
 		{ name: 'Yes: ', value: yesEntry, inline: true},
 		{ name: 'Maybe: ', value: maybeEntry, inline: true },
 		{ name: 'No: ', value: noEntry, inline: true },
@@ -194,29 +93,63 @@ function createEmbed(yesEntry, maybeEntry, noEntry) {
 
 function createButton() {
 
-	var yesID = String("yes" + x++);
-	var maybeID = String("maybe" + y++);
-	var noID = String("no" + z++);
-
 	const buttons = new MessageActionRow()
 		.addComponents(
 			new MessageButton()
-				.setCustomId(yesID)
+				.setCustomId('yes')
 				.setLabel('Yes')
 				.setStyle('SUCCESS')
 				.setEmoji('👍'),
 
 			new MessageButton()
-			.setCustomId(maybeID)
+			.setCustomId('maybe')
 			.setLabel('Maybe')
 			.setStyle('PRIMARY')
 			.setEmoji('🤷'),
 
 			new MessageButton()
-			.setCustomId(noID)
+			.setCustomId('no')
 			.setLabel('No')
 			.setStyle('DANGER')
 			.setEmoji('👎'),
 		);
 	return buttons;
+}
+
+
+function createString(yesEntry, maybeEntry, noEntry) {
+	// For Yes
+	if (yesEntry.length == 0){
+		yesString = "Empty";
+	}
+	else {
+		yesString = "";
+		for (var l = 0; l < yesEntry.length; l++) {
+			yesString = (yesString + yesEntry[l] + '\n');
+		}
+	}
+
+	// For Maybe
+	if (maybeEntry.length == 0){
+		maybeString = "Empty";
+	}
+	else {
+		maybeString = "";
+		for (var l = 0; l < maybeEntry.length; l++) {
+			maybeString = (maybeString + maybeEntry[l] + '\n');
+		}
+	}
+
+	// For No
+	if (noEntry.length == 0){
+		noString = "Empty";
+	}
+	else {
+		noString = "";
+		for (var l = 0; l < noEntry.length; l++) {
+			noString = (noString + noEntry[l] + '\n');
+		}
+	}
+
+	return [yesString, maybeString, noString];
 }
