@@ -29,6 +29,19 @@ module.exports = {
             if (i.customId === "yes" ) {
 				await i.deferUpdate();
 
+
+				if (yesEntry.indexOf(user) > -1) {
+					yesEntry.splice(yesEntry.indexOf(user), 1);
+				}
+
+				if (maybeEntry.indexOf(user) > -1) {
+					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				}
+
+				if (noEntry.indexOf(user) > -1) {
+					noEntry.splice(noEntry.indexOf(user), 1);
+				}
+				
 				yesEntry.push(user);
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
@@ -44,6 +57,18 @@ module.exports = {
             else if (i.customId === "maybe" ) {
 				await i.deferUpdate();
 
+				if (yesEntry.indexOf(user) > -1) {
+					yesEntry.splice(yesEntry.indexOf(user), 1);
+				}
+
+				if (maybeEntry.indexOf(user) > -1) {
+					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				}
+
+				if (noEntry.indexOf(user) > -1) {
+					noEntry.splice(noEntry.indexOf(user), 1);
+				}
+
 				maybeEntry.push(user);
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
@@ -58,6 +83,18 @@ module.exports = {
 
             else if (i.customId === "no") {
 				await i.deferUpdate();
+
+				if (yesEntry.indexOf(user) > -1) {
+					yesEntry.splice(yesEntry.indexOf(user), 1);
+				}
+
+				if (maybeEntry.indexOf(user) > -1) {
+					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				}
+
+				if (noEntry.indexOf(user) > -1) {
+					noEntry.splice(noEntry.indexOf(user), 1);
+				}
 
 				noEntry.push(user);
 
