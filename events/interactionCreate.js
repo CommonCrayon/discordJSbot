@@ -25,6 +25,8 @@ module.exports = {
 
         collector.on('collect', async i => {
 
+			// if user === (`${interaction.user}`) {
+
 
             if (i.customId === "yes" ) {
 				await i.deferUpdate();
@@ -41,10 +43,12 @@ module.exports = {
 				if (noEntry.indexOf(user) > -1) {
 					noEntry.splice(noEntry.indexOf(user), 1);
 				}
+
+				//get array size
 				
 				yesEntry.push(user);
 
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
+				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 				let buttons = createButton(); 
 				
@@ -107,6 +111,8 @@ module.exports = {
 					components: [buttons],
 				});
             }
+
+			// } else {console.log("Passing");}
         });
         
         collector.on('end', collected => console.log(`Collected ${collected.size} items`));
@@ -115,6 +121,9 @@ module.exports = {
 
 
 function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
+
+	var [countdownHour, countdownMinute] = getCountdown(timeScheduled);
+
 	const mainEmbed = new MessageEmbed()
 	//.setThumbnail('https://imgur.com/vUG7MDU.png')
 	.setColor('0xFF6F00')
@@ -123,8 +132,9 @@ function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 	.setDescription('Join a 10 Man!')
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CEST" },
-		{ name: 'Countdown:', value: 'todo'},
-		{ name: 'Yes: ', value: yesEntry, inline: true},
+		{ name: 'Countdown:', value: countdownHour + ":" + countdownMinute},
+		{ name: '\u200B', value: '\u200B' },
+		{ name: 'Yes: ', value: yesEntry, inline: true},	//add array sizes
 		{ name: 'Maybe: ', value: maybeEntry, inline: true },
 		{ name: 'No: ', value: noEntry, inline: true },
 		)
@@ -195,3 +205,30 @@ function createString(yesEntry, maybeEntry, noEntry) {
 
 	return [yesString, maybeString, noString];
 }
+
+
+function getCountdown(timeScheduled) {
+    const scheduledTimeArray = scheduledTime.split(":");
+
+
+    var d = new Date();
+    var cetHour = d.getUTCHours()+2;  //CHANGE FOR CET/CEST
+    var cetMinute = d.getUTCMinutes();
+    
+    var cetTime = (cetHour*60 + cetMinute);
+    
+    var integerUTCHour = parseInt(scheduledTimeArray[0], 10);
+    var integerUTCMin = parseInt(scheduledTimeArray[1], 10);
+    var integerCET = parseInt(cetTime, 10);
+    
+    scheduledMinutes = (integerUTCHour*60 + integerUTCMin);
+    
+    totalMinutes = (scheduledMinutes - integerCET);
+    
+    
+    countdownHour = Math.floor(totalMinutes / 60);
+    countdownMinute = (totalMinutes - countdownHour*60);
+
+    return [countdownHour, countdownMinute];
+}
+
