@@ -18,7 +18,7 @@ module.exports = {
 			.setURL('https://10man.commoncrayon.com/')
 			.setDescription('Join a 10 Man!')
 			.addFields(
-				{ name: 'Time:', value: interaction.options.getString('time')},
+				{ name: 'Time:', value: interaction.options.getString('time') + " CEST"},
 				{ name: 'Countdown:', value: 'todo' },
                 { name: 'Yes:', value: 'Empty' , inline: true},
                 { name: 'Maybe:', value: 'Empty', inline: true },

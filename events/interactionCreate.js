@@ -122,7 +122,7 @@ function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 	.setURL('https://10man.commoncrayon.com/')
 	.setDescription('Join a 10 Man!')
 	.addFields(
-		{ name: 'Time:', value: timeScheduled },
+		{ name: 'Time:', value: timeScheduled + " CEST" },
 		{ name: 'Countdown:', value: 'todo'},
 		{ name: 'Yes: ', value: yesEntry, inline: true},
 		{ name: 'Maybe: ', value: maybeEntry, inline: true },
