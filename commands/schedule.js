@@ -10,66 +10,60 @@ module.exports = {
 
 	async execute(interaction) {
 
-		// TESTING 
-		var interval = setInterval (function () {
+		timeScheduled = interaction.options.getString('time');
 
-			timeScheduled = interaction.options.getString('time');
+		var [countdownHour, countdownMinute] = getCountdown(timeScheduled);
+
+		// Embed 
+		const mainEmbed = new MessageEmbed()
+			.setThumbnail('https://imgur.com/vUG7MDU.png')
+			.setColor('0xFF6F00')
+			.setTitle('10 Man')
+			.setURL('https://10man.commoncrayon.com/')
+			.setDescription('Join a 10 Man!')
+			.addFields(
+				{ name: 'Time:', value: timeScheduled + " CEST"},
+				{ name: 'Countdown:', value: countdownHour + ":" + countdownMinute },
+				{ name: 'Yes:', value: 'Empty' , inline: true},
+				{ name: 'Maybe:', value: 'Empty', inline: true },
+				{ name: 'No:', value: 'Empty', inline: true },
+				)
+			.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+
 		
-			var [countdownHour, countdownMinute] = getCountdown(timeScheduled);
-	
-			// Embed 
-			const mainEmbed = new MessageEmbed()
-				.setThumbnail('https://imgur.com/vUG7MDU.png')
-				.setColor('0xFF6F00')
-				.setTitle('10 Man')
-				.setURL('https://10man.commoncrayon.com/')
-				.setDescription('Join a 10 Man!')
-				.addFields(
-					{ name: 'Time:', value: timeScheduled + " CEST"},
-					{ name: 'Countdown:', value: countdownHour + ":" + countdownMinute },
-					{ name: '\u200B', value: '\u200B' },
-					{ name: 'Yes:', value: 'Empty' , inline: true},
-					{ name: 'Maybe:', value: 'Empty', inline: true },
-					{ name: 'No:', value: 'Empty', inline: true },
-					)
-				.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+		// Buttons
+		const buttons = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setCustomId('yes')
+					.setLabel('Yes')
+					.setStyle('SUCCESS')
+					.setEmoji('👍'),
 
-			
-			// Buttons
-			const buttons = new MessageActionRow()
-				.addComponents(
-					new MessageButton()
-						.setCustomId('yes')
-						.setLabel('Yes')
-						.setStyle('SUCCESS')
-						.setEmoji('👍'),
+				new MessageButton()
+					.setCustomId('maybe')
+					.setLabel('Maybe')
+					.setStyle('PRIMARY')
+					.setEmoji('🤷'),
 
-					new MessageButton()
-						.setCustomId('maybe')
-						.setLabel('Maybe')
-						.setStyle('PRIMARY')
-						.setEmoji('🤷'),
+				new MessageButton()
+					.setCustomId('no')
+					.setLabel('No')
+					.setStyle('DANGER')
+					.setEmoji('👎'),
+			);
 
-					new MessageButton()
-						.setCustomId('no')
-						.setLabel('No')
-						.setStyle('DANGER')
-						.setEmoji('👎'),
-				);
-
-			await interaction.reply(
-				{ content: '<@&843565546004021297>', 
-				embeds: [mainEmbed], 
-				components: [buttons],
-			}); 
-
-		}, 1 * 1000);
+		await interaction.reply(
+			{ content: '<@&843565546004021297>', 
+			embeds: [mainEmbed], 
+			components: [buttons],
+		}); 
 	},
 };
 
 
 function getCountdown(timeScheduled) {
-    const scheduledTimeArray = scheduledTime.split(":");
+    const scheduledTimeArray = timeScheduled.split(":");
 
 
     var d = new Date();

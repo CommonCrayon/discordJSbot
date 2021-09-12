@@ -16,103 +16,100 @@ module.exports = {
 		}
 		catch (e) {}
 
-		console.log(timeScheduled);
-
-
 		user = (`${interaction.user}`)	// Captures user's name
 
 		const collector = interaction.channel.createMessageComponentCollector();
 
+
+
         collector.on('collect', async i => {
+			if (user === (`${interaction.user}`)) {
+				user = assignPriority(user);
 
-			// if user === (`${interaction.user}`) {
+				if (i.customId === "yes" ) {
+					await i.deferUpdate();
 
+					if (yesEntry.indexOf(user) > -1) {
+						yesEntry.splice(yesEntry.indexOf(user), 1);
+					}
 
-            if (i.customId === "yes" ) {
-				await i.deferUpdate();
+					if (maybeEntry.indexOf(user) > -1) {
+						maybeEntry.splice(maybeEntry.indexOf(user), 1);
+					}
 
+					if (noEntry.indexOf(user) > -1) {
+						noEntry.splice(noEntry.indexOf(user), 1);
+					}
 
-				if (yesEntry.indexOf(user) > -1) {
-					yesEntry.splice(yesEntry.indexOf(user), 1);
+					//get array size
+					
+					yesEntry.push(user);
+
+					let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
+					let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
+					let buttons = createButton(); 
+					
+					await i.editReply({content: '<@&843565546004021297>', 
+						embeds: [mainEmbed], 
+						components: [buttons],
+					});
 				}
 
-				if (maybeEntry.indexOf(user) > -1) {
-					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				else if (i.customId === "maybe" ) {
+					await i.deferUpdate();
+
+					if (yesEntry.indexOf(user) > -1) {
+						yesEntry.splice(yesEntry.indexOf(user), 1);
+					}
+
+					if (maybeEntry.indexOf(user) > -1) {
+						maybeEntry.splice(maybeEntry.indexOf(user), 1);
+					}
+
+					if (noEntry.indexOf(user) > -1) {
+						noEntry.splice(noEntry.indexOf(user), 1);
+					}
+
+					maybeEntry.push(user);
+
+					let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
+					let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
+					let buttons = createButton(); 
+					
+					await i.editReply({content: '<@&843565546004021297>', 
+						embeds: [mainEmbed], 
+						components: [buttons],
+					});
 				}
 
-				if (noEntry.indexOf(user) > -1) {
-					noEntry.splice(noEntry.indexOf(user), 1);
+				else if (i.customId === "no") {
+					await i.deferUpdate();
+
+					if (yesEntry.indexOf(user) > -1) {
+						yesEntry.splice(yesEntry.indexOf(user), 1);
+					}
+
+					if (maybeEntry.indexOf(user) > -1) {
+						maybeEntry.splice(maybeEntry.indexOf(user), 1);
+					}
+
+					if (noEntry.indexOf(user) > -1) {
+						noEntry.splice(noEntry.indexOf(user), 1);
+					}
+
+					noEntry.push(user);
+
+					let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
+					let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
+					let buttons = createButton(); 
+					
+					await i.editReply({content: '<@&843565546004021297>', 
+						embeds: [mainEmbed], 
+						components: [buttons],
+					});
 				}
 
-				//get array size
-				
-				yesEntry.push(user);
-
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
-				let buttons = createButton(); 
-				
-				await i.editReply({content: '<@&843565546004021297>', 
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
-            }
-
-            else if (i.customId === "maybe" ) {
-				await i.deferUpdate();
-
-				if (yesEntry.indexOf(user) > -1) {
-					yesEntry.splice(yesEntry.indexOf(user), 1);
-				}
-
-				if (maybeEntry.indexOf(user) > -1) {
-					maybeEntry.splice(maybeEntry.indexOf(user), 1);
-				}
-
-				if (noEntry.indexOf(user) > -1) {
-					noEntry.splice(noEntry.indexOf(user), 1);
-				}
-
-				maybeEntry.push(user);
-
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
-				let buttons = createButton(); 
-				
-				await i.editReply({content: '<@&843565546004021297>', 
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
-            }
-
-            else if (i.customId === "no") {
-				await i.deferUpdate();
-
-				if (yesEntry.indexOf(user) > -1) {
-					yesEntry.splice(yesEntry.indexOf(user), 1);
-				}
-
-				if (maybeEntry.indexOf(user) > -1) {
-					maybeEntry.splice(maybeEntry.indexOf(user), 1);
-				}
-
-				if (noEntry.indexOf(user) > -1) {
-					noEntry.splice(noEntry.indexOf(user), 1);
-				}
-
-				noEntry.push(user);
-
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
-				let buttons = createButton(); 
-				
-				await i.editReply({content: '<@&843565546004021297>', 
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
-            }
-
-			// } else {console.log("Passing");}
+			} else {console.log("Passing Unnecessary Loop");}
         });
         
         collector.on('end', collected => console.log(`Collected ${collected.size} items`));
@@ -122,7 +119,7 @@ module.exports = {
 
 function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 
-	var [countdownHour, countdownMinute] = getCountdown(timeScheduled);
+	let [countdownHour, countdownMinute] = getCountdown(timeScheduled);
 
 	const mainEmbed = new MessageEmbed()
 	//.setThumbnail('https://imgur.com/vUG7MDU.png')
@@ -133,7 +130,6 @@ function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CEST" },
 		{ name: 'Countdown:', value: countdownHour + ":" + countdownMinute},
-		{ name: '\u200B', value: '\u200B' },
 		{ name: 'Yes: ', value: yesEntry, inline: true},	//add array sizes
 		{ name: 'Maybe: ', value: maybeEntry, inline: true },
 		{ name: 'No: ', value: noEntry, inline: true },
@@ -208,8 +204,7 @@ function createString(yesEntry, maybeEntry, noEntry) {
 
 
 function getCountdown(timeScheduled) {
-    const scheduledTimeArray = scheduledTime.split(":");
-
+    const scheduledTimeArray = timeScheduled.split(":");
 
     var d = new Date();
     var cetHour = d.getUTCHours()+2;  //CHANGE FOR CET/CEST
@@ -230,5 +225,25 @@ function getCountdown(timeScheduled) {
     countdownMinute = (totalMinutes - countdownHour*60);
 
     return [countdownHour, countdownMinute];
+}
+
+
+function assignPriority(user) {
+	const priority = [
+		"<@210366732735479808>", // Roald
+		"<@207594599739424768>", // Linkin
+		"<@492040137765814272>", // Mr.Queen
+		"<@148237004830670848>", // Dashtay
+		"<@532310325911879690>", // RoyalBacon
+		"<@277360174371438592>", // CommonCrayon
+		"<@114714586799800323>", // Thisted
+	]; 
+
+	for (var i = 0; i < priority.length; i++) {
+		if (user === priority[i]){
+			user = "🔴" + user;
+		}
+	}
+	return user;
 }
 
