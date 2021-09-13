@@ -24,26 +24,28 @@ for (const file of commandFiles) {
 }
 
 
-
-// Second half of Snippet of code to defer commands to ./commands
 client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
 
+	if (!interaction.isCommand()) return;	// Checks if the interaction is a command. Returns true on eg: 'schedule'.
+	
 	const command = client.commands.get(interaction.commandName);
 
-	if (!command) return;
+	if (!command) return; // When command does not exist.
 
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+	if (interaction.commandName === 'schedule') {
+		try {
+			await command.execute(interaction);
+		} catch (error) {
+			console.error(error);
+			await interaction.reply({ content: 'There was an error while executing schedule!', ephemeral: true });
+		}
 	}
-
-	if (!interaction.isButton()) return;
 });
 
+
+//On Discord Api Error 
 process.on('unhandledRejection', error => {
 	console.error('DiscordAPIError: Unknown interaction');
 });
+
 client.login(token);

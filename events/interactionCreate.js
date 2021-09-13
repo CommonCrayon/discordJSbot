@@ -18,11 +18,16 @@ module.exports = {
 
 		user = (`${interaction.user}`)	// Captures user's name
 
+		const testingArray = [];
+
 		const collector = interaction.channel.createMessageComponentCollector();
 
-
-
         collector.on('collect', async i => {
+
+			testingArray.push(`${i.user} pressed ${i.customId}`);
+			console.log(testingArray);
+			
+
 			if (user === (`${interaction.user}`)) {
 				user = assignPriority(user);
 
@@ -108,11 +113,8 @@ module.exports = {
 						components: [buttons],
 					});
 				}
-
-			} else {console.log("Passing Unnecessary Loop");}
+			}
         });
-        
-        collector.on('end', collected => console.log(`Collected ${collected.size} items`));
 	},
 };
 
@@ -122,7 +124,6 @@ function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 	let [countdownHour, countdownMinute] = getCountdown(timeScheduled);
 
 	const mainEmbed = new MessageEmbed()
-	//.setThumbnail('https://imgur.com/vUG7MDU.png')
 	.setColor('0xFF6F00')
 	.setTitle('10 Man')
 	.setURL('https://10man.commoncrayon.com/')
@@ -130,9 +131,9 @@ function createEmbed(yesEntry, maybeEntry, noEntry, timeScheduled) {
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CEST" },
 		{ name: 'Countdown:', value: countdownHour + ":" + countdownMinute},
-		{ name: 'Yes: ', value: yesEntry, inline: true},	//add array sizes
-		{ name: 'Maybe: ', value: maybeEntry, inline: true },
-		{ name: 'No: ', value: noEntry, inline: true },
+		{ name: `Yes(${yesEntry.length}):`, value: yesEntry, inline: true},	//add array sizes
+		{ name: `Maybe(${maybeEntry.length}):`, value: maybeEntry, inline: true },
+		{ name: `No(${noEntry.length}):`, value: noEntry, inline: true },
 		)
 	.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
 	return mainEmbed;
