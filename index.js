@@ -24,20 +24,22 @@ for (const file of commandFiles) {
 }
 
 
-client.on('interactionCreate', async interaction => {
+client.on('interactionCreate', async interactionSchedule => {
 
-	if (!interaction.isCommand()) return;	// Checks if the interaction is a command. Returns true on eg: 'schedule'.
+	if (!interactionSchedule.isCommand()) return;	// Checks if the interaction is a command. Returns true on eg: 'schedule'.
+
+	console.log();
 	
-	const command = client.commands.get(interaction.commandName);
+	const command = client.commands.get(interactionSchedule.commandName);
 
 	if (!command) return; // When command does not exist.
 
-	if (interaction.commandName === 'schedule') {
+	if (interactionSchedule.commandName === 'schedule') {
 		try {
-			await command.execute(interaction);
+			await command.execute(interactionSchedule);
 		} catch (error) {
 			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing schedule!', ephemeral: true });
+			await interactionSchedule.reply({ content: 'There was an error while executing schedule!', ephemeral: true });
 		}
 	}
 });

@@ -8,9 +8,9 @@ module.exports = {
 		.addStringOption(option => option.setName('time').setDescription('Enter a Time').setRequired(true)),
 
 
-	async execute(interaction) {
+	async execute(interactionSchedule) {
 
-		timeScheduled = interaction.options.getString('time');
+		timeScheduled = interactionSchedule.options.getString('time');
 
 		var [countdownHour, countdownMinute] = getCountdown(timeScheduled);
 
@@ -53,7 +53,7 @@ module.exports = {
 					.setEmoji('👎'),
 			);
 
-		await interaction.reply(
+		await interactionSchedule.reply(
 			{ content: '<@&843565546004021297>', 
 			embeds: [mainEmbed], 
 			components: [buttons],

@@ -8,27 +8,27 @@ const noEntry = [];
 
 module.exports = {
 	name: 'interactionCreate',
-	execute(interaction) {
-		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+	execute(interactionSchedule) {
+		console.log(`${interactionSchedule.user.tag} in #${interactionSchedule.channel.name} triggered an interaction.`);
 
 		try {
-			timeScheduled = interaction.options.getString('time');
+			timeScheduled = interactionSchedule.options.getString('time');
 		}
 		catch (e) {}
 
-		user = (`${interaction.user}`)	// Captures user's name
+		user = (`${interactionSchedule.user}`)
 
-		const testingArray = [];
+		const testingArray = [];	// INIATLISING AND CLEARING ARRAY
 
-		const collector = interaction.channel.createMessageComponentCollector();
+		const collector = interactionSchedule.channel.createMessageComponentCollector();
 
         collector.on('collect', async i => {
 
 			testingArray.push(`${i.user} pressed ${i.customId}`);
-			console.log(testingArray);
+			console.log(testingArray);								// THIS PRINTS ARRAY OF BUTTON PRESSES
 			
 
-			if (user === (`${interaction.user}`)) {
+			if (user === (`${interactionSchedule.user}`)) {
 				user = assignPriority(user);
 
 				if (i.customId === "yes" ) {
