@@ -1,4 +1,5 @@
-const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { time } = require('@discordjs/builders');
+const { MessageActionRow, MessageButton, MessageEmbed, Interaction } = require('discord.js');
 
 
 const yesEntry = [];
@@ -8,30 +9,86 @@ const noEntry = [];
 
 module.exports = {
 	name: 'interactionCreate',
-	execute(interactionSchedule) {
-		console.log(`${interactionSchedule.user.tag} in #${interactionSchedule.channel.name} triggered an interaction.`);
+	execute(interaction) {
 
-		try {
-			timeScheduled = interactionSchedule.options.getString('time');
-		}
-		catch (e) {}
+		if (interaction.commandName === 'trivia') {
+			console.log(`Trivia triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
 
-		user = (`${interactionSchedule.user}`)
+			const collector = interaction.channel.createMessageComponentCollector({ time: 15000 }); //time: 15 seconds
+	
+			collector.on('collect', async i => {
 
-		const testingArray = [];	// INIATLISING AND CLEARING ARRAY
-
-		const collector = interactionSchedule.channel.createMessageComponentCollector();
-
-        collector.on('collect', async i => {
-
-			testingArray.push(`${i.user} pressed ${i.customId}`);
-			console.log(testingArray);								// THIS PRINTS ARRAY OF BUTTON PRESSES
+				user = (`<@${i.user.id}>`);
+				buttonClicked = (i.customId);
+				console.log(`Trivia Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 			
+				await i.deferUpdate();
+				/*
+				if (buttonClicked === "A" ) {
+					await i.deferUpdate();
+				
+					await i.editReply(
+						{  content: "Hello",
+					});
+				}
 
-			if (user === (`${interactionSchedule.user}`)) {
+				else if (buttonClicked === "B" ) {
+					await i.deferUpdate();
+				
+					await i.editReply(
+						{  content: "Hello",
+					});
+				}
+
+				else if (buttonClicked === "C" ) {
+					await i.deferUpdate();
+				
+					await i.editReply(
+						{  content: "Hello",
+					});
+				}
+
+				else if (buttonClicked === "D" ) {
+					await i.deferUpdate();
+				
+					await i.editReply(
+						{  content: "Hello",
+					});
+				}
+				*/
+
+				await i.editReply(
+					{  content: `${user} Selected ${buttonClicked}`,
+				});
+			});
+	
+			collector.on('end', async i => {
+
+				console.log("Ended Trivia Message");
+
+				console.log(i);
+			});
+		}
+
+
+
+
+		else if (interaction.commandName === 'schedule') {
+			console.log(`Schedule triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
+
+			timeScheduled = interaction.options.getString('time');	//Getting String for timeScheduled posted in Time embed.
+
+			const collector = interaction.channel.createMessageComponentCollector();
+	
+			collector.on('collect', async i => {
+			
+				user = (`<@${i.user.id}>`);
+				buttonClicked = (i.customId);
+				console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
+
 				user = assignPriority(user);
 
-				if (i.customId === "yes" ) {
+				if (buttonClicked === "yes" ) {
 					await i.deferUpdate();
 
 					if (yesEntry.indexOf(user) > -1) {
@@ -54,13 +111,13 @@ module.exports = {
 					let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 					let buttons = createButton(); 
 					
-					await i.editReply({content: '<@&843565546004021297>', 
+					await i.editReply({content: "<@&843565546004021297>", 
 						embeds: [mainEmbed], 
 						components: [buttons],
 					});
 				}
 
-				else if (i.customId === "maybe" ) {
+				else if (buttonClicked === "maybe" ) {
 					await i.deferUpdate();
 
 					if (yesEntry.indexOf(user) > -1) {
@@ -81,13 +138,13 @@ module.exports = {
 					let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 					let buttons = createButton(); 
 					
-					await i.editReply({content: '<@&843565546004021297>', 
+					await i.editReply({content: "<@&843565546004021297>", 
 						embeds: [mainEmbed], 
 						components: [buttons],
 					});
 				}
 
-				else if (i.customId === "no") {
+				else if (buttonClicked === "no") {
 					await i.deferUpdate();
 
 					if (yesEntry.indexOf(user) > -1) {
@@ -108,14 +165,15 @@ module.exports = {
 					let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled); 
 					let buttons = createButton(); 
 					
-					await i.editReply({content: '<@&843565546004021297>', 
+					await i.editReply({content: "<@&843565546004021297>", 
 						embeds: [mainEmbed], 
 						components: [buttons],
 					});
 				}
-			}
-        });
+			});
+		}		
 	},
+
 };
 
 

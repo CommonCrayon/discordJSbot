@@ -18,36 +18,45 @@ for (const file of eventFiles) {
 //  First half of Snippet of code to defer commands to ./commands
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+console.log(commandFiles);
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.data.name, command);
 }
 
 
-client.on('interactionCreate', async interactionSchedule => {
+client.on('interactionCreate', async interaction => {
 
-	if (!interactionSchedule.isCommand()) return;	// Checks if the interaction is a command. Returns true on eg: 'schedule'.
-
-	console.log();
+	if (!interaction.isCommand()) return;	// Checks if the interaction is a command. Returns true on eg: 'schedule'.
 	
-	const command = client.commands.get(interactionSchedule.commandName);
+	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return; // When command does not exist.
 
-	if (interactionSchedule.commandName === 'schedule') {
+	if (interaction.commandName === 'schedule') {
 		try {
-			await command.execute(interactionSchedule);
+			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);
-			await interactionSchedule.reply({ content: 'There was an error while executing schedule!', ephemeral: true });
+			await interaction.reply({ content: 'There was an error while executing schedule!', ephemeral: true });
 		}
 	}
+
+	else if (interaction.commandName === 'trivia') {
+		try {
+			await command.execute(interaction);
+		} catch (error) {
+			console.error(error);
+			await interaction.reply({ content: 'There was an error while executing trivia!', ephemeral: true });
+		}
+	}
+
 });
 
 
 //On Discord Api Error 
 process.on('unhandledRejection', error => {
-	console.error('DiscordAPIError: Unknown interaction');
+	console.error(error);
 });
 
 client.login(token);
