@@ -30,12 +30,6 @@ module.exports = {
 			.setColor('0xFF6F00')
 			.setTitle(category)
 			.setDescription(question)
-			.addFields(
-				{ name: 'A', value: incorrect_answers[0]},
-				{ name: 'B', value: incorrect_answers[1]},
-				{ name: 'C', value: incorrect_answers[2]},
-				{ name: 'D', value: incorrect_answers[3]},
-				)
 			.setFooter(`Difficulty: ${difficulty}`, 'https://i.imgur.com/nuEpvJd.png');
 
 		
@@ -44,27 +38,23 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 					.setCustomId('A')
-					.setLabel('A')
+					.setLabel(incorrect_answers[0])
 					.setStyle('PRIMARY'),
-					//.setEmoji('🇦'),
 
 				new MessageButton()
 					.setCustomId('B')
-					.setLabel('B')
+					.setLabel(incorrect_answers[1])
 					.setStyle('PRIMARY'),
-					//.setEmoji('🇧'),
 
 				new MessageButton()
 					.setCustomId('C')
-					.setLabel('C')
+					.setLabel(incorrect_answers[2])
 					.setStyle('PRIMARY'),
-					//.setEmoji('🇨'),
 
 				new MessageButton()
 					.setCustomId('D')
-					.setLabel('D')
+					.setLabel(incorrect_answers[3])
 					.setStyle('PRIMARY'),
-					//.setEmoji('🇩'),
 			);
 
 		await interaction.reply(

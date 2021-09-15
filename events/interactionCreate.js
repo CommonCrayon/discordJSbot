@@ -61,8 +61,9 @@ module.exports = {
 	
 			collector.on('end', async i => {
 				console.log("Ended Trivia Message");
+				var correct_answer = "Carbon"	//IMPORT SOMEHOW
 				interaction.channel.send(
-					{  content: "The correct answer is: ",
+					{  content: `The correct answer is: ${correct_answer}`,
 				});
 			});
 			
