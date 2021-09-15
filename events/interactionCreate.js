@@ -57,20 +57,16 @@ module.exports = {
 				}
 				*/
 
-				await i.editReply(
-					{  content: `${user} Selected ${buttonClicked}`,
-				});
 			});
 	
 			collector.on('end', async i => {
-
 				console.log("Ended Trivia Message");
-
-				console.log(i);
+				interaction.channel.send(
+					{  content: "The correct answer is: ",
+				});
 			});
+			
 		}
-
-
 
 
 		else if (interaction.commandName === 'schedule') {
