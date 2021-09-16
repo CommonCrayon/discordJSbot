@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
-//const fetch = require('node-fetch')
+const axios = require('axios');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,16 +10,30 @@ module.exports = {
 	async execute(interaction) {
 
 		/*
-		fetch('https://opentdb.com/api.php?amount=1&type=multiple')
-			.then(response => response.json())
-			.then(data => console.log(data));
+		axios.get('https://opentdb.com/api.php?amount=1&type=multiple')
+			.then((response) => {
+				console.log('Response: ', response.data)
+			})
+			.catch((error) => {
+				console.error('Error: ', error)
+			})
 		*/
 
-		var category = "Science & Nature";
-		var difficulty = "easy";
-		var question = "This element, when overcome with extreme heat and pressure, creates diamonds.";
-		var correct_answer = "Carbon";
-		var incorrect_answers = ["Nitrogen","Oxygen","Hydrogen"]
+		const res = await axios.get('https://opentdb.com/api.php?amount=1&type=multiple', {
+			headers: {
+				'Test-Header': 'test-value'
+			}
+			});
+			
+		const info = (res.data.results[0]);
+
+		var category = (info.category);
+		var difficulty = (info.difficulty);
+		var question = (info.question);
+		var correct_answer = (info.correct_answer);
+		var incorrect_answers = (info.incorrect_answers);
+
+		writeTextFile('correctAnswer.txt', correct_answer);
 
 		incorrect_answers.push(correct_answer);
 		shuffle(incorrect_answers);
@@ -81,4 +95,11 @@ function shuffle(array) {
 	}
   
 	return array;
+  }
+
+  function writeTextFile(afilename, output)
+  {
+	var txtFile =new File(afilename);
+	txtFile.writeln(output);
+	txtFile.close();
   }
