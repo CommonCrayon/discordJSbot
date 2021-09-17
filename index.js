@@ -33,24 +33,7 @@ client.on('interactionCreate', async interaction => {
 
 	if (!command) return; // When command does not exist.
 
-	if (interaction.commandName === 'schedule') {
-		try {
-			await command.execute(interaction);
-		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing schedule!', ephemeral: true });
-		}
-	}
-
-	else if (interaction.commandName === 'trivia') {
-		try {
-			await command.execute(interaction);
-		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing trivia!', ephemeral: true });
-		}
-	}
-
+	await command.execute(interaction);
 });
 
 

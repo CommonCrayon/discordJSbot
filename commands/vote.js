@@ -4,9 +4,9 @@ const { MessageActionRow, MessageSelectMenu, MessageEmbed } = require('discord.j
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('vote')
-		.setDescription('Starts Change Time Vote!'),
+		.setDescription('Starts Change Time Vote!')
+		.addIntegerOption(option => option.setName('timeout').setDescription('Enter number of minutes for voting').setRequired(true)),
         
-
 
 	async execute(interaction) {
 		// Embed 
@@ -39,8 +39,52 @@ module.exports = {
 			);
 
 
-		await interaction.reply({ embeds: [mainEmbed], components: [dropdown],}); 
-	},
+		await interaction.reply(
+			{ 
+			embeds: [mainEmbed], 
+			components: [dropdown],
+		})
+
+		console.log(`Vote triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
+
+		const totalMinutes = interaction.options.getInteger('timeout');
+		var interactionTimeout = (totalMinutes*60*1000);	// 30 Minutes + Minutes of the countdown * 60 to make into seconds * 1000 to make it into miliseconds
+
+		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout }); 
+
+		collector.on('collect', async i => {
+
+			if ((i.values) === 'first_option') {
+				await i.deferUpdate();
+				await i.editReply(`<@${i.user.id}> Selected 20:00`);
+			}
+
+			else if ((i.values) === 'second_option') {
+				await i.deferUpdate();
+				await i.editReply(`<@${i.user.id}> Selected 20:30`);
+			}
+
+			else if ((i.values) === 'third_option') {
+				await i.deferUpdate();
+				await i.editReply(`<@${i.user.id}> Selected 21:00`);
+			}
+
+			else if ((i.values) === 'fourth_option') {
+				await i.deferUpdate();
+				await i.editReply(`<@${i.user.id}> Selected 21:30`);
+			}
+
+			else if ((i.values) === 'fifth_option') {
+				await i.deferUpdate();
+				await i.editReply(`<@${i.user.id}> Selected 22:00`);
+			}
+		});
+
+		collector.on('end', async i => {
+			console.log("Ended Vote");
+		});
+	}
+
 };
 
 
