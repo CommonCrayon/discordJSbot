@@ -32,7 +32,7 @@ module.exports = {
 				{ name: 'Maybe:', value: 'Empty', inline: true },
 				{ name: 'No:', value: 'Empty', inline: true },
 				)
-			.setFooter('connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+			.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
 
 		
 		// Buttons
@@ -58,7 +58,7 @@ module.exports = {
 			);
 
 		await interaction.reply(
-			{ content: "<@&843565546004021297>", 
+			{ content: "@everyone", 
 			embeds: [mainEmbed], 
 			components: [buttons],
 		})
@@ -94,15 +94,13 @@ module.exports = {
 					noEntry.splice(noEntry.indexOf(user), 1);
 				}
 
-				//get array size
-				
 				yesEntry.push(user);
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "<@&843565546004021297>", 
+				await i.editReply({content: "@everyone", 
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -129,7 +127,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "<@&843565546004021297>", 
+				await i.editReply({content: "@everyone", 
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -156,7 +154,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "<@&843565546004021297>", 
+				await i.editReply({content: "@everyone", 
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -177,12 +175,12 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 	.setDescription('Join a 10 Man!')
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CEST" },
-		{ name: 'Countdown:', value: countdownHour + ":" + countdownMinute},
-		{ name: `Yes(${yesEntry.length}):`, value: yesString, inline: true},	//add array sizes
+		{ name: 'Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
+		{ name: `Yes(${yesEntry.length}):`, value: yesString, inline: true},
 		{ name: `Maybe(${maybeEntry.length}):`, value: maybeString, inline: true },
 		{ name: `No(${noEntry.length}):`, value: noString, inline: true },
 		)
-	.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+	.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png')
 	return mainEmbed;
 }
 
@@ -289,7 +287,7 @@ function assignPriority(user) {
 
 	for (var i = 0; i < priority.length; i++) {
 		if (user === priority[i]){
-			user = "🔴" + user;
+			user = "🎗️" + user;
 		}
 	}
 	return user;

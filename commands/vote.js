@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageSelectMenu, MessageEmbed } = require('discord.js');
 
-const option1 = ('\u200b');
-const option2 = ('\u200b');
-const option3 = ('\u200b');
-const option4 = ('\u200b');
-const option5 = ('\u200b');
+var option1 = ('\u200b');
+var option2 = ('\u200b');
+var option3 = ('\u200b');
+var option4 = ('\u200b');
+var option5 = ('\u200b');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -23,9 +23,19 @@ module.exports = {
 
 		option1 = interaction.options.getString('option1');
 		option2 = interaction.options.getString('option2');
-		option3 = interaction.options.getString('option3');
-		option4 = interaction.options.getString('option4');
-		option5 = interaction.options.getString('option5');
+		if (interaction.options.getString('option3') != null){
+			option3 = interaction.options.getString('option3');
+		}
+
+		if (interaction.options.getString('option4') != null){
+			option3 = interaction.options.getString('option4');
+		}
+
+		if (interaction.options.getString('option5') != null){
+			option3 = interaction.options.getString('option5');
+		}
+
+		console.log(option1, option2, option3, option4, option5);
 
 		// Embed 
 		const mainEmbed = new MessageEmbed()

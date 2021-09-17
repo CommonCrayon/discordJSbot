@@ -19,14 +19,17 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 					.setCustomId('r1A')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 
 				new MessageButton()
 					.setCustomId('r1B')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 
 				new MessageButton()
 					.setCustomId('r1C')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 			);
 
@@ -34,14 +37,17 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 					.setCustomId('r2A')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 
 				new MessageButton()
 					.setCustomId('r2B')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 
 				new MessageButton()
 					.setCustomId('r2C')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 			);
 
@@ -49,17 +55,21 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 					.setCustomId('r3A')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 
 				new MessageButton()
 					.setCustomId('r3B')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 
 				new MessageButton()
 					.setCustomId('r3C')
+					.setLabel('\u200b')
 					.setStyle('PRIMARY'),
 			);
 		await interaction.reply({
+				content: (`${player1} vs ${player2}`),
 				components: [buttonRow1, buttonRow2, buttonRow3 ]
 			}) 
         
@@ -68,113 +78,26 @@ module.exports = {
 		
 		const collector = interaction.channel.createMessageComponentCollector({ filter, time: 15000 }); //time: 15 seconds
 
-		var correctEntries = [];
-		var incorrectEntries = [];
 
 		collector.on('collect', async i => {
 
 			user = (`<@${i.user.id}>`);
 			buttonClicked = (i.customId);
-			console.log(`Trivia Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
 			if (buttonClicked === "A" ) {
-				if (corAnsNum === 0){
 
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-	
-					correctEntries.push(user);
-				}
-				else {
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
 			}
 
 			else if (buttonClicked === "B" ) {
-				if (corAnsNum === 1){
 
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					correctEntries.push(user);
-				}
-				else {
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
 			}
 
 			else if (buttonClicked === "C" ) {
-				if (corAnsNum === 2){
 
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					correctEntries.push(user);
-				}
-				else {
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
 			}
 
 			else if (buttonClicked === "D" ) {
-				if (corAnsNum === 3){
 
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					correctEntries.push(user);
-				}
-				else {
-					
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
 			}
 		
 			await i.deferUpdate();
@@ -183,30 +106,11 @@ module.exports = {
 		collector.on('end', async i => {
 			console.log("Ended Trivia Message");
 
-			console.log(correctEntries, incorrectEntries)
 
 			
 			interaction.channel.send(
-				{  content: `The correct answer is: ${correct_answer}\nCongratulations to: ${correctEntries}\nBetter luck next time: ${incorrectEntries}`,
+				{  content: `Player won`,
 			});
 		});
 	}
 };
-
-function shuffle(array) {
-	let currentIndex = array.length,  randomIndex;
-  
-	// While there remain elements to shuffle...
-	while (currentIndex != 0) {
-  
-	  // Pick a remaining element...
-	  randomIndex = Math.floor(Math.random() * currentIndex);
-	  currentIndex--;
-  
-	  // And swap it with the current element.
-	  [array[currentIndex], array[randomIndex]] = [
-		array[randomIndex], array[currentIndex]];
-	}
-  
-	return array;
-  }
