@@ -9,7 +9,7 @@ module.exports = {
 
 
 	async execute(interaction) {
-
+		
 		const yesEntry = [];
 		const maybeEntry = [];
 		const noEntry = [];

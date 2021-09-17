@@ -1,25 +1,43 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageSelectMenu, MessageEmbed } = require('discord.js');
 
+const option1 = ('\u200b');
+const option2 = ('\u200b');
+const option3 = ('\u200b');
+const option4 = ('\u200b');
+const option5 = ('\u200b');
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('vote')
 		.setDescription('Starts Change Time Vote!')
-		.addIntegerOption(option => option.setName('timeout').setDescription('Enter number of minutes for voting').setRequired(true)),
+		.addIntegerOption(option => option.setName('timeout').setDescription('Enter number of minutes for voting').setRequired(true))
+		.addStringOption(option => option.setName('option1').setDescription('Enter Option 1').setRequired(true))
+		.addStringOption(option => option.setName('option2').setDescription('Enter Option 2').setRequired(true))
+		.addStringOption(option => option.setName('option3').setDescription('Enter Option 3'))
+		.addStringOption(option => option.setName('option4').setDescription('Enter Option 4'))
+		.addStringOption(option => option.setName('option5').setDescription('Enter Option 5')),
         
 
 	async execute(interaction) {
+
+		option1 = interaction.options.getString('option1');
+		option2 = interaction.options.getString('option2');
+		option3 = interaction.options.getString('option3');
+		option4 = interaction.options.getString('option4');
+		option5 = interaction.options.getString('option5');
+
 		// Embed 
 		const mainEmbed = new MessageEmbed()
 			.setColor('0xFF6F00')
 			.setTitle('Change 10-Man Time Vote:')
 			.setDescription('Vote from the dropdown')
 			.addFields(
-				{ name: '20:00:', value: '\u200b' },
-				{ name: '20:30:', value: '\u200b' },
-				{ name: '21:00:', value: '\u200b' },
-				{ name: '21:30:', value: '\u200b' },
-				{ name: '22:00:', value: '\u200b' })
+				{ name: option1, value: '\u200b' },
+				{ name: option2, value: '\u200b' },
+				{ name: option3, value: '\u200b' },
+				{ name: option4, value: '\u200b' },
+				{ name: option5, value: '\u200b' })
 			.setFooter('Made By CommonCrayon', 'https://i.imgur.com/nuEpvJd.png');
 
 		// dropdowns
@@ -29,11 +47,11 @@ module.exports = {
 					.setCustomId('select')
 					.setPlaceholder('Nothing selected')
 					.addOptions([
-						{label: '20:00', value: 'first_option'},
-						{label: '20:30', value: 'second_option'},
-						{label: '21:00', value: 'third_option'},
-						{label: '21:30', value: 'fourth_option'},
-						{label: '22:00', value: 'fifth_option'},
+						{label: option1, value: 'first_option'},
+						{label: option2, value: 'second_option'},
+						{label: option3, value: 'third_option'},
+						{label: option4, value: 'fourth_option'},
+						{label: option5, value: 'fifth_option'},
 					]),
 			);
 
@@ -131,11 +149,11 @@ function createEmbed(firstOption, secondOption, thirdOption, fourthOption, fifth
 	.setTitle('Change 10-Man Time Vote:')
 	.setDescription('Vote from the dropdown')
 	.addFields(
-		{ name: '20:00:', value: firstOption },
-		{ name: '20:30:', value: secondOption },
-		{ name: '21:00:', value: thirdOption },
-		{ name: '21:30:', value: fourthOption },
-		{ name: '22:00:', value: fifthOption })
+		{ name: option1, value: firstOption },
+		{ name: option2, value: secondOption },
+		{ name: option3, value: thirdOption },
+		{ name: option4, value: fourthOption },
+		{ name: option5, value: fifthOption })
 	.setFooter('Made By CommonCrayon', 'https://i.imgur.com/nuEpvJd.png');
 	return mainEmbed;
 }
