@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const axios = require('axios');
+const { decode } = require('html-entities');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,13 +18,11 @@ module.exports = {
 			
 		const info = (res.data.results[0]);
 
-		var category = (info.category);
-		var difficulty = (info.difficulty);
-		var question = (info.question);
-		var correct_answer = (info.correct_answer);
-		var incorrect_answers = (info.incorrect_answers);
-
-		
+		var category = decode(info.category);
+		var difficulty = decode(info.difficulty);
+		var question = decode(info.question);
+		var correct_answer = decode(info.correct_answer);
+		var incorrect_answers = decode(info.incorrect_answers);
 
 		incorrect_answers.push(correct_answer);
 		shuffle(incorrect_answers);
