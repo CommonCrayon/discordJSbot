@@ -39,6 +39,7 @@ module.exports = {
 
 		// Embed 
 		const mainEmbed = new MessageEmbed()
+			.setThumbnail('https://imgur.com/vUG7MDU.png')
 			.setColor('0xFF6F00')
 			.setTitle('Change 10-Man Time Vote:')
 			.setDescription('Vote from the dropdown')
@@ -95,7 +96,13 @@ module.exports = {
 			if ((i.values) == 'first_option') {
 				await i.deferUpdate();
 
-				firstOption.push(user);
+				if (firstOption.indexOf(user) > -1) {
+					firstOption.splice(firstOption.indexOf(user), 1);
+				}
+				else {
+					firstOption.push(user);
+				}
+
 				let [firstString, secondString, thirdString, fourthString, fifthString] = createString(firstOption, secondOption, thirdOption, fourthOption, fifthOption);
 				let mainEmbed = createEmbed(firstString, secondString, thirdString, fourthString, fifthString);
 
@@ -105,7 +112,13 @@ module.exports = {
 			else if ((i.values) == 'second_option') {
 				await i.deferUpdate();
 
-				secondOption.push(user);
+				if (secondOption.indexOf(user) > -1) {
+					secondOption.splice(secondOption.indexOf(user), 1);
+				}
+				else {
+					secondOption.push(user);
+				}
+
 				let [firstString, secondString, thirdString, fourthString, fifthString] = createString(firstOption, secondOption, thirdOption, fourthOption, fifthOption);
 				let mainEmbed = createEmbed(firstString, secondString, thirdString, fourthString, fifthString);
 
@@ -115,7 +128,13 @@ module.exports = {
 			else if ((i.values) == 'third_option') {
 				await i.deferUpdate();
 
-				thirdOption.push(user);
+				if (thirdOption.indexOf(user) > -1) {
+					thirdOption.splice(thirdOption.indexOf(user), 1);
+				}
+				else {
+					thirdOption.push(user);
+				}
+
 				let [firstString, secondString, thirdString, fourthString, fifthString] = createString(firstOption, secondOption, thirdOption, fourthOption, fifthOption);
 				let mainEmbed = createEmbed(firstString, secondString, thirdString, fourthString, fifthString);
 
@@ -125,7 +144,13 @@ module.exports = {
 			else if ((i.values) == 'fourth_option') {
 				await i.deferUpdate();
 
-				fourthOption.push(user);
+				if (fourthOption.indexOf(user) > -1) {
+					fourthOption.splice(fourthOption.indexOf(user), 1);
+				}
+				else {
+					fourthOption.push(user);
+				}
+
 				let [firstString, secondString, thirdString, fourthString, fifthString] = createString(firstOption, secondOption, thirdOption, fourthOption, fifthOption);
 				let mainEmbed = createEmbed(firstString, secondString, thirdString, fourthString, fifthString);
 
@@ -135,7 +160,13 @@ module.exports = {
 			else if ((i.values) == 'fifth_option') {
 				await i.deferUpdate();
 
-				fifthOption.push(user);
+				if (fourthOption.indexOf(user) > -1) {
+					fourthOption.splice(fourthOption.indexOf(user), 1);
+				}
+				else {
+					fifthOption.push(user);
+				}
+
 				let [firstString, secondString, thirdString, fourthString, fifthString] = createString(firstOption, secondOption, thirdOption, fourthOption, fifthOption);
 				let mainEmbed = createEmbed(firstString, secondString, thirdString, fourthString, fifthString);
 

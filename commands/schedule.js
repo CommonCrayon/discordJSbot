@@ -237,16 +237,16 @@ function createButton() {
 				.setEmoji('👍'),
 
 			new MessageButton()
-			.setCustomId('maybe')
-			.setLabel('Maybe')
-			.setStyle('PRIMARY')
-			.setEmoji('🤷'),
+				.setCustomId('maybe')
+				.setLabel('Maybe')
+				.setStyle('PRIMARY')
+				.setEmoji('🤷'),
 
 			new MessageButton()
-			.setCustomId('no')
-			.setLabel('No')
-			.setStyle('DANGER')
-			.setEmoji('👎'),
+				.setCustomId('no')
+				.setLabel('No')
+				.setStyle('DANGER')
+				.setEmoji('👎'),
 		);
 	return buttons;
 }
