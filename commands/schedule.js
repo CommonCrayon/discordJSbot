@@ -159,7 +159,48 @@ module.exports = {
 					components: [buttons],
 				});
 			}
-		});; 
+		});;
+
+
+
+		collector.on('end', async i => {
+			console.log("Ended Trivia Message");
+
+			console.log(correctEntries, incorrectEntries)
+
+			const buttons = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setCustomId('yes')
+					.setLabel('Yes')
+					.setStyle('SUCCESS')
+					.setEmoji('👍')
+					.setDisabled(true),
+
+				new MessageButton()
+					.setCustomId('maybe')
+					.setLabel('Maybe')
+					.setStyle('PRIMARY')
+					.setEmoji('🤷')
+					.setDisabled(true),
+
+				new MessageButton()
+					.setCustomId('no')
+					.setLabel('No')
+					.setStyle('DANGER')
+					.setEmoji('👎')
+					.setDisabled(true),
+			);
+
+			await i.editReply({
+				components: [buttons]
+			});
+
+			
+			interaction.channel.send(
+				{  content: `The correct answer is: ${correct_answer}\nCongratulations to: ${correctEntries}\nBetter luck next time: ${incorrectEntries}`,
+			});
+		});
 	},
 };
 
