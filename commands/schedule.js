@@ -36,7 +36,7 @@ module.exports = {
 
 		
 		// Buttons
-		const buttons = new MessageActionRow()
+		var buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
 					.setCustomId('yes')
@@ -168,7 +168,7 @@ module.exports = {
 
 			console.log(correctEntries, incorrectEntries)
 
-			const buttons = new MessageActionRow()
+			var buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
 					.setCustomId('yes')

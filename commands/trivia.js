@@ -43,7 +43,7 @@ module.exports = {
 
 		
 		// Buttons
-		const buttons = new MessageActionRow()
+		var buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
 					.setCustomId('A')
@@ -186,42 +186,40 @@ module.exports = {
 		});
 
 		collector.on('end', async i => {
+
 			console.log("Ended Trivia Message");
 
-			console.log(correctEntries, incorrectEntries)
-
-			const buttons = new MessageActionRow()
+			var buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
 					.setCustomId('A')
 					.setLabel(incorrect_answers[0])
 					.setStyle('PRIMARY')
 					.setDisabled(true),
-
+	
 				new MessageButton()
 					.setCustomId('B')
 					.setLabel(incorrect_answers[1])
 					.setStyle('PRIMARY')
 					.setDisabled(true),
-
+	
 				new MessageButton()
 					.setCustomId('C')
 					.setLabel(incorrect_answers[2])
 					.setStyle('PRIMARY')
 					.setDisabled(true),
-
+	
 				new MessageButton()
 					.setCustomId('D')
 					.setLabel(incorrect_answers[3])
 					.setStyle('PRIMARY')
 					.setDisabled(true),
 			);
-
-			await i.editReply({
+	
+			await interaction.editReply({
 				components: [buttons],
 			});
-
-			
+		
 			interaction.channel.send(
 				{  content: `The correct answer is: ${correct_answer}\nCongratulations to: ${correctEntries}\nBetter luck next time: ${incorrectEntries}`,
 			});
