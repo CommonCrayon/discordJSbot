@@ -76,6 +76,11 @@ module.exports = {
 		var correctEntries = [];
 		var incorrectEntries = [];
 
+		var buttonStyleA = 'PRIMARY'
+		var buttonStyleB = 'PRIMARY'
+		var buttonStyleC = 'PRIMARY'
+		var buttonStyleD = 'PRIMARY'
+
 		collector.on('collect', async i => {
 
 			user = (`<@${i.user.id}>`);
@@ -83,103 +88,19 @@ module.exports = {
 			console.log(`Trivia Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
 			if (buttonClicked === "A" ) {
-				if (corAnsNum === 0){
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-	
-					correctEntries.push(user);
-				}
-				else {
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
+				arraySequence(corAnsNum, 0, user, correctEntries, incorrectEntries);
 			}
 
 			else if (buttonClicked === "B" ) {
-				if (corAnsNum === 1){
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					correctEntries.push(user);
-				}
-				else {
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
+				arraySequence(corAnsNum, 1, user, correctEntries, incorrectEntries);
 			}
 
 			else if (buttonClicked === "C" ) {
-				if (corAnsNum === 2){
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					correctEntries.push(user);
-				}
-				else {
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
+				arraySequence(corAnsNum, 2, user, correctEntries, incorrectEntries);
 			}
 
 			else if (buttonClicked === "D" ) {
-				if (corAnsNum === 3){
-
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					correctEntries.push(user);
-				}
-				else {
-					
-					if (correctEntries.indexOf(user) > -1) {
-						correctEntries.splice(correctEntries.indexOf(user), 1);
-					}
-					if (incorrectEntries.indexOf(user) > -1) {
-						incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
-					}
-
-					incorrectEntries.push(user);
-				}
+				arraySequence(corAnsNum, 3, user, correctEntries, incorrectEntries);
 			}
 		
 			await i.deferUpdate();
@@ -189,30 +110,47 @@ module.exports = {
 
 			console.log("Ended Trivia Message");
 
+			if (corAnsNum === 0){
+				buttonStyleA = 'SUCCESS'
+			}
+
+			else if (corAnsNum === 1){
+				buttonStyleB = 'SUCCESS'
+			}
+
+			else if (corAnsNum === 2){
+				buttonStyleC = 'SUCCESS'
+			}
+
+			else if (corAnsNum === 3){
+				buttonStyleD = 'SUCCESS'
+			};
+
+
 			var buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
 					.setCustomId('A')
 					.setLabel(incorrect_answers[0])
-					.setStyle('PRIMARY')
+					.setStyle(buttonStyleA)
 					.setDisabled(true),
 	
 				new MessageButton()
 					.setCustomId('B')
 					.setLabel(incorrect_answers[1])
-					.setStyle('PRIMARY')
+					.setStyle(buttonStyleB)
 					.setDisabled(true),
 	
 				new MessageButton()
 					.setCustomId('C')
 					.setLabel(incorrect_answers[2])
-					.setStyle('PRIMARY')
+					.setStyle(buttonStyleC)
 					.setDisabled(true),
 	
 				new MessageButton()
 					.setCustomId('D')
 					.setLabel(incorrect_answers[3])
-					.setStyle('PRIMARY')
+					.setStyle(buttonStyleD)
 					.setDisabled(true),
 			);
 	
@@ -244,3 +182,29 @@ function shuffle(array) {
   
 	return array;
   }
+
+
+function arraySequence(corAnsNum, buttonValue, user, correctEntries, incorrectEntries) {
+	if (corAnsNum === buttonValue){
+
+		if (correctEntries.indexOf(user) > -1) {
+			correctEntries.splice(correctEntries.indexOf(user), 1);
+		}
+		if (incorrectEntries.indexOf(user) > -1) {
+			incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
+		}
+
+		correctEntries.push(user);
+	}
+	else {
+
+		if (correctEntries.indexOf(user) > -1) {
+			correctEntries.splice(correctEntries.indexOf(user), 1);
+		}
+		if (incorrectEntries.indexOf(user) > -1) {
+			incorrectEntries.splice(incorrectEntries.indexOf(user), 1);
+		}
+
+		incorrectEntries.push(user);
+	}
+}
