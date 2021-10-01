@@ -19,7 +19,7 @@ module.exports = {
 		var [countdownHour, countdownMinute, totalMinutes] = getCountdown(timeScheduled);
 
 		// Embed 
-		const mainEmbed = new MessageEmbed()
+		var mainEmbed = new MessageEmbed()
 			.setThumbnail('https://imgur.com/vUG7MDU.png')
 			.setColor('0xFF6F00')
 			.setTitle('10 Man')
@@ -163,10 +163,19 @@ module.exports = {
 
 
 
-		collector.on('end', async i => {
-			console.log("Ended Trivia Message");
+		// Updating Countdown every minute.
+		var interval = setInterval (async function () {
+			let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
+			let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 
-			console.log(correctEntries, incorrectEntries)
+			await interaction.editReply({embeds: [mainEmbed]});
+		  }, 60000);  // Every 60 Seconds update countdown
+
+
+
+		// 30 Minutes after Scheduled time has passed.
+		collector.on('end', async i => {
+			console.log("Ended Schedule Message");
 
 			var buttons = new MessageActionRow()
 			.addComponents(
@@ -192,13 +201,8 @@ module.exports = {
 					.setDisabled(true),
 			);
 
-			await i.editReply({
+			await interaction.editReply({
 				components: [buttons]
-			});
-
-			
-			interaction.channel.send(
-				{  content: `The correct answer is: ${correct_answer}\nCongratulations to: ${correctEntries}\nBetter luck next time: ${incorrectEntries}`,
 			});
 		});
 	},
@@ -209,14 +213,21 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 
 	let [countdownHour, countdownMinute, totalMinutes] = getCountdown(timeScheduled);
 
-	const mainEmbed = new MessageEmbed()
+	if (totalMinutes > 0) {
+		var countdownOutput = (`Starting in ${countdownHour}H ${countdownMinute}M`);
+	}
+	else {
+		var countdownOutput = (`Started!`);
+	}
+
+	var mainEmbed = new MessageEmbed()
 	.setColor('0xFF6F00')
 	.setTitle('10 Man')
 	.setURL('https://10man.commoncrayon.com/')
 	.setDescription('Join a 10 Man!')
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CEST" },
-		{ name: 'Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
+		{ name: 'Countdown:', value: countdownOutput},
 		{ name: `Yes(${yesEntry.length}):`, value: yesString, inline: true},
 		{ name: `Maybe(${maybeEntry.length}):`, value: maybeString, inline: true },
 		{ name: `No(${noEntry.length}):`, value: noString, inline: true },
@@ -228,7 +239,7 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 
 function createButton() {
 
-	const buttons = new MessageActionRow()
+	var buttons = new MessageActionRow()
 		.addComponents(
 			new MessageButton()
 				.setCustomId('yes')
@@ -333,4 +344,3 @@ function assignPriority(user) {
 	}
 	return user;
 }
-
