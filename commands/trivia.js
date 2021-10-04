@@ -10,19 +10,37 @@ module.exports = {
 
 	async execute(interaction) {
 
-		const res = await axios.get('https://opentdb.com/api.php?amount=1&type=multiple', {
-			headers: {
-				'Test-Header': 'test-value'
-			}
+		if (Math.random() < 0.5) {
+			const res = await axios.get('https://api.trivia.willfry.co.uk/questions?limit=1', {
+				headers: {
+					'Test-Header': 'test-value'
+				}
 			});
-			
-		const info = (res.data.results[0]);
-
-		var category = decode(info.category);
-		var difficulty = decode(info.difficulty);
-		var question = decode(info.question);
-		var correct_answer = decode(info.correct_answer);
-		var incorrect_answers = decode(info.incorrect_answers);
+				
+			const info = (res.data[0]);
+		
+			var category = (info.category);
+			var correct_answer = (info.correctAnswer);
+			var incorrect_answers = (info.incorrectAnswers.slice(0,3));
+			var question = (info.question);
+			var difficulty = ("N/A");
+		}
+	
+		else {
+			const res = await axios.get('https://opentdb.com/api.php?amount=1&type=multiple', {
+				headers: {
+					'Test-Header': 'test-value'
+				}
+				});
+				
+			const info = (res.data.results[0]);
+	
+			var category = decode(info.category);
+			var difficulty = decode(info.difficulty);
+			var question = decode(info.question);
+			var correct_answer = decode(info.correct_answer);
+			var incorrect_answers = decode(info.incorrect_answers);
+		}
 
 		incorrect_answers.push(correct_answer);
 		shuffle(incorrect_answers);
@@ -181,7 +199,7 @@ function shuffle(array) {
 	}
   
 	return array;
-  }
+}
 
 
 function arraySequence(corAnsNum, buttonValue, user, correctEntries, incorrectEntries) {
