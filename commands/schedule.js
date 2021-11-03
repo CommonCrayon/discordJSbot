@@ -10,9 +10,9 @@ module.exports = {
 
 	async execute(interaction) {
 		
-		const yesEntry = [];
-		const maybeEntry = [];
-		const noEntry = [];
+		var yesEntry = [];
+		var maybeEntry = [];
+		var noEntry = [];
 
 		timeScheduled = interaction.options.getString('time');
 
@@ -27,7 +27,7 @@ module.exports = {
 			.setDescription('Join a 10 Man!')
 			.addFields(
 				{ name: 'Time:', value: timeScheduled + " CEST"},
-				{ name: 'Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
+				{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
 				{ name: 'Yes:', value: 'Empty' , inline: true},
 				{ name: 'Maybe:', value: 'Empty', inline: true },
 				{ name: 'No:', value: 'Empty', inline: true },
@@ -55,6 +55,11 @@ module.exports = {
 					.setLabel('No')
 					.setStyle('DANGER')
 					.setEmoji('👎'),
+
+				new MessageButton()
+					.setCustomId('update')
+					.setStyle('SECONDARY')
+					.setEmoji('🔄'),
 			);
 
 		await interaction.reply(
@@ -69,7 +74,7 @@ module.exports = {
 
 		var interactionTimeout = ((30 + totalMinutes)*60*1000)	// 30 Minutes + Minutes of the countdown * 60 to make into seconds * 1000 to make it into miliseconds
 
-		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout }); 
+		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout });
 
 		collector.on('collect', async i => {
 		
@@ -94,7 +99,17 @@ module.exports = {
 					noEntry.splice(noEntry.indexOf(user), 1);
 				}
 
-				yesEntry.push(user);
+				const scheduledTimeArray = timeScheduled.split(":");
+
+				var d = new Date();
+				var prioTimeLeft = ((parseInt(scheduledTimeArray[0], 10)*60 + parseInt(scheduledTimeArray[1], 10)) - ((d.getUTCHours()+1)*60 + d.getUTCMinutes())); // CHANGE FOR DAYLIGHT
+
+
+				if (user.includes("🎗️") && prioTimeLeft > 30) {
+					yesEntry = [user].concat(yesEntry) 
+				}
+				else {yesEntry.push(user);}
+
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
@@ -159,18 +174,20 @@ module.exports = {
 					components: [buttons],
 				});
 			}
+
+			else if (buttonClicked === "update") {
+				await i.deferUpdate();
+
+				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
+				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
+				let buttons = createButton(); 
+				
+				await i.editReply({content: "@everyone", 
+					embeds: [mainEmbed], 
+					components: [buttons],
+				});
+			}
 		});;
-
-
-
-		// Updating Countdown every minute.
-		var interval = setInterval (async function () {
-			let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-			let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
-
-			await interaction.editReply({embeds: [mainEmbed]});
-		  }, 60000);  // Every 60 Seconds update countdown
-
 
 
 		// 30 Minutes after Scheduled time has passed.
@@ -227,7 +244,7 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 	.setDescription('Join a 10 Man!')
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CEST" },
-		{ name: 'Countdown:', value: countdownOutput},
+		{ name: '🔄 Countdown:', value: countdownOutput},
 		{ name: `Yes(${yesEntry.length}):`, value: yesString, inline: true},
 		{ name: `Maybe(${maybeEntry.length}):`, value: maybeString, inline: true },
 		{ name: `No(${noEntry.length}):`, value: noString, inline: true },
@@ -258,6 +275,11 @@ function createButton() {
 				.setLabel('No')
 				.setStyle('DANGER')
 				.setEmoji('👎'),
+
+			new MessageButton()
+				.setCustomId('update')
+				.setStyle('SECONDARY')
+				.setEmoji('🔄'),
 		);
 	return buttons;
 }
@@ -305,7 +327,7 @@ function getCountdown(timeScheduled) {
     const scheduledTimeArray = timeScheduled.split(":");
 
     var d = new Date();
-    var cetHour = d.getUTCHours()+2;  //CHANGE FOR CET/CEST
+    var cetHour = d.getUTCHours()+1;  //CHANGE FOR CET/CEST
     var cetMinute = d.getUTCMinutes();
     
     var cetTime = (cetHour*60 + cetMinute);
@@ -333,6 +355,9 @@ function assignPriority(user) {
 		"<@492040137765814272>", // Mr.Queen
 		"<@148237004830670848>", // Dashtay
 		"<@532310325911879690>", // RoyalBacon
+		"<@431743926974808076>", // k0vac
+		"<@285367857934630912>", // Amajha
+		"<@216678626182168577>", // Cajeb
 		"<@277360174371438592>", // CommonCrayon
 		"<@114714586799800323>", // Thisted
 	]; 
