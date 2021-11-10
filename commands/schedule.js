@@ -26,7 +26,7 @@ module.exports = {
 			.setURL('https://10man.commoncrayon.com/')
 			.setDescription('Join a 10 Man!')
 			.addFields(
-				{ name: 'Time:', value: timeScheduled + " CEST"},
+				{ name: 'Time:', value: timeScheduled + " CET"},
 				{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
 				{ name: 'Yes:', value: 'Empty' , inline: true},
 				{ name: 'Maybe:', value: 'Empty', inline: true },
@@ -99,16 +99,7 @@ module.exports = {
 					noEntry.splice(noEntry.indexOf(user), 1);
 				}
 
-				const scheduledTimeArray = timeScheduled.split(":");
-
-				var d = new Date();
-				var prioTimeLeft = ((parseInt(scheduledTimeArray[0], 10)*60 + parseInt(scheduledTimeArray[1], 10)) - ((d.getUTCHours()+1)*60 + d.getUTCMinutes())); // CHANGE FOR DAYLIGHT
-
-
-				if (user.includes("🎗️") && prioTimeLeft > 30) {
-					yesEntry = [user].concat(yesEntry) 
-				}
-				else {yesEntry.push(user);}
+				yesEntry.push(user);
 
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
@@ -243,7 +234,7 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 	.setURL('https://10man.commoncrayon.com/')
 	.setDescription('Join a 10 Man!')
 	.addFields(
-		{ name: 'Time:', value: timeScheduled + " CEST" },
+		{ name: 'Time:', value: timeScheduled + " CET" },
 		{ name: '🔄 Countdown:', value: countdownOutput},
 		{ name: `Yes(${yesEntry.length}):`, value: yesString, inline: true},
 		{ name: `Maybe(${maybeEntry.length}):`, value: maybeString, inline: true },
@@ -358,6 +349,7 @@ function assignPriority(user) {
 		"<@431743926974808076>", // k0vac
 		"<@285367857934630912>", // Amajha
 		"<@216678626182168577>", // Cajeb
+		"<@224909663689244673>", // Shadow
 		"<@277360174371438592>", // CommonCrayon
 		"<@114714586799800323>", // Thisted
 	]; 
