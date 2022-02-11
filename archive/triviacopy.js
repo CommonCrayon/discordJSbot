@@ -4,19 +4,12 @@ const axios = require('axios');
 const { decode } = require('html-entities');
 
 module.exports = {
-	data: new SlashCommandBuilder().setName('trivia').setDescription('Start a Trivia Marathon in a Thread!'),
+	data: new SlashCommandBuilder()
+		.setName('trivia')
+		.setDescription('Play a Trivia Question!'),
 
 	async execute(interaction) {
 
-		/*
-		const triviaThread = await channel.threads.create({
-			name: 'trivia-marathon',
-			autoArchiveDuration: 60,
-			reason: 'Trivia Marathon!',
-		});
-		*/
-
-		// Get Trivia question
 		if (Math.random() < 0.5) {
 			const res = await axios.get('https://api.trivia.willfry.co.uk/questions?limit=1', {
 				headers: {
@@ -49,11 +42,9 @@ module.exports = {
 			var incorrect_answers = decode(info.incorrect_answers);
 		}
 
-		// Shuffle the correct answer into the correct answer.
 		incorrect_answers.push(correct_answer);
 		shuffle(incorrect_answers);
 
-		// Mark what the correct answer is in the list.
 		for (var i = 0; i < incorrect_answers.length; i++) {
 			if (correct_answer === incorrect_answers[i]){
 				corAnsNum = i
@@ -188,15 +179,7 @@ module.exports = {
 			interaction.channel.send(
 				{  content: `The correct answer is: ${correct_answer}\nCongratulations to: ${correctEntries}\nBetter luck next time: ${incorrectEntries}`,
 			});
-			
-			console.log(correctEntries.length != 0 || incorrectEntries.length != 0);
-
-			
-			command.execute(interaction);
-
-			
 		});
-
 	}
 };
 
