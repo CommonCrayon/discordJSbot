@@ -8,6 +8,35 @@ module.exports = {
 
 
 	async execute(interaction) {
+
+		const sqlite3 = require('sqlite3').verbose();
+
+		// open the database
+		let db = new sqlite3.Database('./commands/database/10manpool.db', sqlite3.OPEN_READWRITE, (err) => {
+		  if (err) {
+			console.error(err.message);
+		  }
+		  console.log('Connected to the database.');
+		});
+
+		db.serialize(() => {
+		  db.each(`SELECT workshopID as id,
+						  mapName as name
+				   FROM pool`, (err, row) => {
+			if (err) {
+			  console.error(err.message);
+			}
+			console.log(row.id + "\t" + row.name);
+		  });
+		});
+
+		
+		db.close((err) => {
+		  if (err) {
+			console.error(err.message);
+		  }
+		  console.log('Close the database connection.');
+		});
 		
 		// Embed 
 		var poolEmbed = new MessageEmbed()
@@ -16,7 +45,7 @@ module.exports = {
 			.setURL('https://10man.commoncrayon.com/')
 			.setDescription('Join a 10 Man!')
 			.addFields(
-				{ name: 'Map:', value: 'MapList'},
+				{ name: 'Map:', value: 'Lure\n' + mapList},
 				)
 			.setFooter('Number of Maps: ADD', 'https://i.imgur.com/nuEpvJd.png');
 

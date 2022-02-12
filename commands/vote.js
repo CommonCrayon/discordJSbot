@@ -20,51 +20,63 @@ module.exports = {
         
 
 	async execute(interaction) {
+		
+        // CommonCrayon, Thisted, Cktos, Karl, Cajeb, Dashtay
+        admin = ['277360174371438592', '114714586799800323', '335786316782501888', '342426491675738115', '216678626182168577', '148237004830670848']
+        
+        if (admin.includes(interaction.user.id)) {
 
-		option1 = interaction.options.getString('option1');
-		option2 = interaction.options.getString('option2');
-		if (interaction.options.getString('option3') != null){
-			option3 = interaction.options.getString('option3');
-		}
+			option1 = interaction.options.getString('option1');
+			option2 = interaction.options.getString('option2');
+			if (interaction.options.getString('option3') != null){
+				option3 = interaction.options.getString('option3');
+			}
 
-		if (interaction.options.getString('option4') != null){
-			option3 = interaction.options.getString('option4');
-		}
+			if (interaction.options.getString('option4') != null){
+				option3 = interaction.options.getString('option4');
+			}
 
-		if (interaction.options.getString('option5') != null){
-			option3 = interaction.options.getString('option5');
-		}
+			if (interaction.options.getString('option5') != null){
+				option3 = interaction.options.getString('option5');
+			}
 
-		console.log(option1, option2, option3, option4, option5);
+			console.log(option1, option2, option3, option4, option5);
 
-		// Embed 
-		const mainEmbed = new MessageEmbed()
-			.setThumbnail('https://imgur.com/vUG7MDU.png')
-			.setColor('0xFF6F00')
-			.setTitle('Change 10-Man Time Vote:')
-			.setDescription('Vote from the dropdown')
-			.addFields(
-				{ name: option1, value: '\u200b' },
-				{ name: option2, value: '\u200b' },
-				{ name: option3, value: '\u200b' },
-				{ name: option4, value: '\u200b' },
-				{ name: option5, value: '\u200b' })
-			.setFooter('Made By CommonCrayon', 'https://i.imgur.com/nuEpvJd.png');
+			// Embed 
+			const mainEmbed = new MessageEmbed()
+				.setThumbnail('https://imgur.com/vUG7MDU.png')
+				.setColor('0xFF6F00')
+				.setTitle('Change 10-Man Time Vote:')
+				.setDescription('Vote from the dropdown')
+				.addFields(
+					{ name: option1, value: '\u200b' },
+					{ name: option2, value: '\u200b' },
+					{ name: option3, value: '\u200b' },
+					{ name: option4, value: '\u200b' },
+					{ name: option5, value: '\u200b' })
+				.setFooter('Made By CommonCrayon', 'https://i.imgur.com/nuEpvJd.png');
 
-		// dropdowns
-		const dropdown = new MessageActionRow()
-			.addComponents(
-				new MessageSelectMenu()
-					.setCustomId('select')
-					.setPlaceholder('Nothing selected')
-					.addOptions([
-						{label: option1, value: 'first_option'},
-						{label: option2, value: 'second_option'},
-						{label: option3, value: 'third_option'},
-						{label: option4, value: 'fourth_option'},
-						{label: option5, value: 'fifth_option'},
-					]),
-			);
+			// dropdowns
+			const dropdown = new MessageActionRow()
+				.addComponents(
+					new MessageSelectMenu()
+						.setCustomId('select')
+						.setPlaceholder('Nothing selected')
+						.addOptions([
+							{label: option1, value: 'first_option'},
+							{label: option2, value: 'second_option'},
+							{label: option3, value: 'third_option'},
+							{label: option4, value: 'fourth_option'},
+							{label: option5, value: 'fifth_option'},
+						]),
+				);
+
+			} else {
+				// Missing Perms 
+				var rconEmbed = new MessageEmbed()
+					.setColor('0xFF6F00')
+					.setTitle('Permission Denied')
+			}
 
 
 		await interaction.reply(

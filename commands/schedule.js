@@ -9,61 +9,72 @@ module.exports = {
 
 
 	async execute(interaction) {
-		
-		var yesEntry = [];
-		var maybeEntry = [];
-		var noEntry = [];
 
-		timeScheduled = interaction.options.getString('time');
+        // CommonCrayon, Thisted, Cktos, Karl, Cajeb, Dashtay
+        admin = ['277360174371438592', '114714586799800323', '335786316782501888', '342426491675738115', '216678626182168577', '148237004830670848']
+        
+        if (admin.includes(interaction.user.id)) {
+			
+			var yesEntry = [];
+			var maybeEntry = [];
+			var noEntry = [];
 
-		var [countdownHour, countdownMinute, totalMinutes] = getCountdown(timeScheduled);
+			timeScheduled = interaction.options.getString('time');
 
-		// Embed 
-		var mainEmbed = new MessageEmbed()
-			.setThumbnail('https://imgur.com/vUG7MDU.png')
-			.setColor('0xFF6F00')
-			.setTitle('10 Man')
-			.setURL('https://10man.commoncrayon.com/')
-			.setDescription('Join a 10 Man!')
-			.addFields(
-				{ name: 'Time:', value: timeScheduled + " CET"},
-				{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
-				{ name: 'Yes:', value: 'Empty' , inline: true},
-				{ name: 'Maybe:', value: 'Empty', inline: true },
-				{ name: 'No:', value: 'Empty', inline: true },
-				)
-			.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+			var [countdownHour, countdownMinute, totalMinutes] = getCountdown(timeScheduled);
 
-		
-		// Buttons
-		var buttons = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('yes')
-					.setLabel('Yes')
-					.setStyle('SUCCESS')
-					.setEmoji('👍'),
+			// Embed 
+			var mainEmbed = new MessageEmbed()
+				.setThumbnail('https://imgur.com/vUG7MDU.png')
+				.setColor('0xFF6F00')
+				.setTitle('10 Man')
+				.setURL('https://10man.commoncrayon.com/')
+				.setDescription('Join a 10 Man!')
+				.addFields(
+					{ name: 'Time:', value: timeScheduled + " CET"},
+					{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
+					{ name: 'Yes:', value: 'Empty' , inline: true},
+					{ name: 'Maybe:', value: 'Empty', inline: true },
+					{ name: 'No:', value: 'Empty', inline: true },
+					)
+				.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
 
-				new MessageButton()
-					.setCustomId('maybe')
-					.setLabel('Maybe')
-					.setStyle('PRIMARY')
-					.setEmoji('🤷'),
+			
+			// Buttons
+			var buttons = new MessageActionRow()
+				.addComponents(
+					new MessageButton()
+						.setCustomId('yes')
+						.setLabel('Yes')
+						.setStyle('SUCCESS')
+						.setEmoji('👍'),
 
-				new MessageButton()
-					.setCustomId('no')
-					.setLabel('No')
-					.setStyle('DANGER')
-					.setEmoji('👎'),
+					new MessageButton()
+						.setCustomId('maybe')
+						.setLabel('Maybe')
+						.setStyle('PRIMARY')
+						.setEmoji('🤷'),
 
-				new MessageButton()
-					.setCustomId('update')
-					.setStyle('SECONDARY')
-					.setEmoji('🔄'),
-			);
+					new MessageButton()
+						.setCustomId('no')
+						.setLabel('No')
+						.setStyle('DANGER')
+						.setEmoji('👎'),
+
+					new MessageButton()
+						.setCustomId('update')
+						.setStyle('SECONDARY')
+						.setEmoji('🔄'),
+				);
+			} else {
+				// Missing Perms 
+				var rconEmbed = new MessageEmbed()
+					.setColor('0xFF6F00')
+					.setTitle('Permission Denied')
+			}
 
 		await interaction.reply(
-			{ content: "@everyone", 
+			{
 			embeds: [mainEmbed], 
 			components: [buttons],
 		})
@@ -77,8 +88,9 @@ module.exports = {
 		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout });
 
 		collector.on('collect', async i => {
-		
-			user = (`<@${i.user.id}>`);
+			
+			console.log(i.user.username);
+			user = (i.user.username);
 			buttonClicked = (i.customId);
 			console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
@@ -106,7 +118,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "@everyone", 
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -133,7 +145,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "@everyone", 
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -160,7 +172,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "@everyone", 
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -173,7 +185,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({content: "@everyone", 
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -341,17 +353,17 @@ function getCountdown(timeScheduled) {
 
 function assignPriority(user) {
 	const priority = [
-		"<@210366732735479808>", // Roald
-		"<@207594599739424768>", // Linkin
-		"<@492040137765814272>", // Mr.Queen
-		"<@148237004830670848>", // Dashtay
-		"<@532310325911879690>", // RoyalBacon
+		"Roald",
+		"linkinblak",
+		"QueeN",
+		"DashBash",
+		"Royal Bacon",
 		"<@431743926974808076>", // k0vac
-		"<@285367857934630912>", // Amajha
-		"<@216678626182168577>", // Cajeb
-		"<@224909663689244673>", // Shadow
-		"<@277360174371438592>", // CommonCrayon
-		"<@114714586799800323>", // Thisted
+		"Amajha",
+		"CaJeB3",
+		"ShadowPoor",
+		"CommonCrayon",
+		"Thisted",
 	]; 
 
 	for (var i = 0; i < priority.length; i++) {
