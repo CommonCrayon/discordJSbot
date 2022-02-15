@@ -27,7 +27,6 @@ module.exports = {
                 console.log("Error: " + err);
                 }).on('end', function() {
                 console.log("Connection closed");
-                process.exit();
             });
 
             conn.connect();
@@ -36,17 +35,24 @@ module.exports = {
             var mapEmbed = new MessageEmbed()
                 .setColor('0xFF6F00')
                 .setTitle('Successfully Changed Map to: ' + workshopid)
+
+            await interaction.reply(
+                { embeds: [mapEmbed],
+            })
         
         } else {
             // Missing Perms 
-            var rconEmbed = new MessageEmbed()
+            var deniedEmbed = new MessageEmbed()
                 .setColor('0xFF6F00')
                 .setTitle('Permission Denied')
+                .setDescription('Must be an Admin')
+
+            await interaction.reply(
+                {
+                embeds: [deniedEmbed], 
+                ephemeral: true 
+            })
         }
-			
-		await interaction.reply(
-			{ embeds: [mapEmbed],
-		})
 	},
 };
 

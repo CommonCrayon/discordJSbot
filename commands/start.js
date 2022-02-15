@@ -27,7 +27,7 @@ module.exports = {
             conn.on('auth', function() {
                 console.log("Authenticated");
                 console.log("Sending command: mp_warmup_end")
-        
+                
                 conn.send("mp_warmup_end");
 
                 }).on('response', function(str) {
@@ -38,7 +38,6 @@ module.exports = {
 
                 }).on('end', function() {
                 console.log("Connection closed");
-                process.exit();
             });
 
             conn.connect();
@@ -49,16 +48,23 @@ module.exports = {
                 .setColor('0xFF6F00')
                 .setTitle('Warmup Ended')
 
+            await interaction.reply(
+                { embeds: [startEmbed],
+            })
+
         } else {
             // Missing Perms 
-            var rconEmbed = new MessageEmbed()
+            var deniedEmbed = new MessageEmbed()
                 .setColor('0xFF6F00')
                 .setTitle('Permission Denied')
+                .setDescription('Must be an Admin')
+
+            await interaction.reply(
+                {
+                embeds: [deniedEmbed], 
+                ephemeral: true 
+            })
         }
-			
-		await interaction.reply(
-			{ embeds: [startEmbed],
-		})
 	},
 };
 

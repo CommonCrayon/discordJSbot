@@ -33,9 +33,9 @@ module.exports = {
 				.addFields(
 					{ name: 'Time:', value: timeScheduled + " CET"},
 					{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
-					{ name: 'Yes:', value: 'Empty' , inline: true},
-					{ name: 'Maybe:', value: 'Empty', inline: true },
-					{ name: 'No:', value: 'Empty', inline: true },
+					{ name: '__Yes:__', value: 'Empty' , inline: true},
+					{ name: '__Maybe:__', value: 'Empty', inline: true },
+					{ name: '__No:__', value: 'Empty', inline: true },
 					)
 				.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
 
@@ -66,18 +66,26 @@ module.exports = {
 						.setStyle('SECONDARY')
 						.setEmoji('🔄'),
 				);
-			} else {
-				// Missing Perms 
-				var rconEmbed = new MessageEmbed()
-					.setColor('0xFF6F00')
-					.setTitle('Permission Denied')
-			}
 
-		await interaction.reply(
-			{
-			embeds: [mainEmbed], 
-			components: [buttons],
-		})
+				await interaction.reply(
+					{
+					embeds: [mainEmbed], 
+					components: [buttons]
+				})
+
+		} else {
+			// Missing Perms 
+			var deniedEmbed = new MessageEmbed()
+				.setColor('0xFF6F00')
+				.setTitle('Permission Denied')
+				.setDescription('Must be an Admin')
+
+			await interaction.reply(
+				{
+				embeds: [deniedEmbed], 
+				ephemeral: true 
+			})
+		}
 		
 		console.log(`Schedule triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
 
@@ -89,7 +97,6 @@ module.exports = {
 
 		collector.on('collect', async i => {
 			
-			console.log(i.user.username);
 			user = (i.user.username);
 			buttonClicked = (i.customId);
 			console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
@@ -248,9 +255,9 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 	.addFields(
 		{ name: 'Time:', value: timeScheduled + " CET" },
 		{ name: '🔄 Countdown:', value: countdownOutput},
-		{ name: `Yes(${yesEntry.length}):`, value: yesString, inline: true},
-		{ name: `Maybe(${maybeEntry.length}):`, value: maybeString, inline: true },
-		{ name: `No(${noEntry.length}):`, value: noString, inline: true },
+		{ name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
+		{ name: `__Maybe(${maybeEntry.length}):__`, value: maybeString, inline: true },
+		{ name: `__No(${noEntry.length}):__`, value: noString, inline: true },
 		)
 	.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png')
 	return mainEmbed;

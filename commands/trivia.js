@@ -189,9 +189,6 @@ module.exports = {
 				{  content: `The correct answer is: ${correct_answer}\nCongratulations to: ${correctEntries}\nBetter luck next time: ${incorrectEntries}`,
 			});
 			
-			console.log(correctEntries.length != 0 || incorrectEntries.length != 0);
-
-			
 			command.execute(interaction);
 
 			

@@ -26,12 +26,11 @@ module.exports = {
     
                 conn.send(command);
                 }).on('response', function(str) {
-                console.log("Response: " + str);
+                console.log("Response: " + str); // HOW TO GET STR RESPONSE
                 }).on('error', function(err) {
                 console.log("Error: " + err);
                 }).on('end', function() {
                 console.log("Connection closed");
-                process.exit();
             });
     
             conn.connect();
@@ -42,19 +41,24 @@ module.exports = {
                 .setColor('0xFF6F00')
                 .setTitle('Successfully sent command: ' + command)
                 .setDescription('RESPONSE WILL BE ADDED')
+
+            await interaction.reply(
+                { embeds: [rconEmbed],
+            })
         
         } else {
             // Missing Perms 
-            var rconEmbed = new MessageEmbed()
+            var deniedEmbed = new MessageEmbed()
                 .setColor('0xFF6F00')
                 .setTitle('Permission Denied')
+                .setDescription('Must be an Admin')
+
+            await interaction.reply(
+                {
+                embeds: [deniedEmbed], 
+                ephemeral: true 
+            })
         }
-
-
-			
-		await interaction.reply(
-			{ embeds: [rconEmbed],
-		})
 	},
 };
 
