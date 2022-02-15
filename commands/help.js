@@ -27,12 +27,9 @@ module.exports = {
                 { name: '/rcon', value: 'Send a Commands to the 10 Man Server' },
                 { name: '/schedule', value: 'Schedules a 10 Man' },
             )
-            .setTimestamp()
             .setFooter({ text: 'Made By CommonCrayon', iconURL: 'https://imgur.com/a/P0Ef644' });
 
-        await interaction.reply(
-            { embeds: [helpEmbed],
-        })
+        await interaction.reply({ embeds: [helpEmbed] })
 	},
 };
 
