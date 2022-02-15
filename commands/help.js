@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
-var Rcon = require('rcon');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,8 +8,6 @@ module.exports = {
 
 
 	async execute(interaction) {
-
-
 
         // Embed 
         var helpEmbed = new MessageEmbed()
