@@ -15,16 +15,25 @@ module.exports = {
             .setTitle('BotCrayon')
             .setDescription('I am used to help run the 10mans hosted by Maps Of No Trades.\nI also have a few fun commands!')
             .addFields(
-                { name: 'User Commands', value: '\u200B' },
+                { name: '\u200B', value: '**User Commands**' },
                 { name: '/help', value: 'Displays This!' },
                 { name: '/trivia', value: 'Play a Trivia Question!' },
-                { name: 'Admin Commands', value: '\u200B' },
+
+                { name: '\u200B', value: '**Admin Commands**' },
+                { name: '/schedule', value: 'Schedules a 10 Man\n' },
+
                 { name: '/start', value: 'Start a 10 Man Game' },
-                { name: '/map', value: 'Change Map on 10 Man Server' },
-                { name: '/rcon', value: 'Send a Commands to the 10 Man Server' },
-                { name: '/schedule', value: 'Schedules a 10 Man' },
+                { name: '/map', value: 'Change Map on the 10 Man Server' },
+                { name: '/rcon', value: 'Send a Commands to the 10 Man Server\n' },
+
+                { name: '/pool', value: 'Displays the Map Pool' },
+                { name: '/addmap', value: 'Adds a Map to the Map Pool' },
+                { name: '/removemap', value: 'Removes a Map to the Map Pool' },
+                { name: '/votemap', value: 'Vote on 5 Random Maps' },
+                { name: '/spinmap', value: 'Gets One Random Map' },
             )
-            .setFooter({ text: 'Made By CommonCrayon', iconURL: 'https://imgur.com/a/P0Ef644' });
+            .setFooter({ text: 'Made By CommonCrayon', iconURL: 'https://imgur.com/a/P0Ef644' })
+            .setTimestamp();
 
         await interaction.reply({ embeds: [helpEmbed] })
 	},

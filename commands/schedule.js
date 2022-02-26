@@ -124,8 +124,10 @@ module.exports = {
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
-				
-				await i.editReply({
+
+
+				await i.deleteReply();
+				await i.followUp({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -150,9 +152,10 @@ module.exports = {
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
-				let buttons = createButton(); 
-				
-				await i.editReply({
+				let buttons = createButton();
+
+				await i.deleteReply();
+				await i.followUp({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -179,7 +182,8 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 				
-				await i.editReply({
+				await i.deleteReply();
+				await i.followUp({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -191,8 +195,9 @@ module.exports = {
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
-				
-				await i.editReply({
+
+				await i.deleteReply();
+				await i.followUp({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -228,7 +233,8 @@ module.exports = {
 					.setDisabled(true),
 			);
 
-			await interaction.editReply({
+			await interaction.deleteReply();
+			await interaction.followUp({
 				components: [buttons]
 			});
 		});
@@ -369,6 +375,7 @@ function assignPriority(user) {
 		"Amajha",
 		"CaJeB3",
 		"ShadowPoor",
+		"Rik",
 		"CommonCrayon",
 		"Thisted",
 	]; 
