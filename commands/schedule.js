@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const sqlite3 = require('sqlite3').verbose();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,6 +15,41 @@ module.exports = {
         admin = ['277360174371438592', '114714586799800323', '335786316782501888', '342426491675738115', '216678626182168577', '148237004830670848']
         
         if (admin.includes(interaction.user.id)) {
+
+
+			// open the database
+			let db = new sqlite3.Database('./commands/database/subscribers.db', sqlite3.OPEN_READWRITE, (err) => {
+				if (err) {
+				console.error(err.message);
+				}
+				console.log('Connected to the database.');
+			});
+	
+	
+			// Getting all the rows in the database
+			function getData() {
+				return new Promise((resolve, reject) => {
+					db.all(`SELECT userid FROM subscriber`, (err, row) => {
+						if (err) { reject(err); }
+						resolve(row);
+					});
+				})
+			}
+	
+			const data = await getData();
+			
+			mentionSubs = ' '
+			data.forEach(element => {
+				mentionSubs += ('<@' + element.userid + '> ');
+			});
+
+
+			db.close((err) => {
+				if (err) {
+				  console.error(err.message);
+				}
+				console.log('Close the database connection.');
+			});
 			
 			var yesEntry = [];
 			var maybeEntry = [];
@@ -67,11 +103,17 @@ module.exports = {
 						.setEmoji('🔄'),
 				);
 
-				await interaction.reply(
-					{
-					embeds: [mainEmbed], 
-					components: [buttons]
-				})
+			await interaction.reply(
+				{
+				content: mentionSubs,
+				embeds: [mainEmbed], 
+				components: [buttons]
+			});
+
+			/*await interaction.followUp(
+				{
+				content: mentionSubs,
+			})	*/
 
 		} else {
 			// Missing Perms 
@@ -125,9 +167,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 
-
-				await i.deleteReply();
-				await i.followUp({
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -154,8 +194,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton();
 
-				await i.deleteReply();
-				await i.followUp({
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -181,9 +220,8 @@ module.exports = {
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
-				
-				await i.deleteReply();
-				await i.followUp({
+
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -196,8 +234,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 
-				await i.deleteReply();
-				await i.followUp({
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -233,8 +270,7 @@ module.exports = {
 					.setDisabled(true),
 			);
 
-			await interaction.deleteReply();
-			await interaction.followUp({
+			await interaction.editReply({
 				components: [buttons]
 			});
 		});

@@ -35,6 +35,7 @@ module.exports = {
             var mapEmbed = new MessageEmbed()
                 .setColor('0xFF6F00')
                 .setTitle('Successfully Changed Map to: ' + workshopid)
+                .setURL('https://steamcommunity.com/sharedfiles/filedetails/?id='.concat(workshopid))
 
             await interaction.reply(
                 { embeds: [mapEmbed],

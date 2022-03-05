@@ -52,6 +52,9 @@ module.exports = {
                 { embeds: [startEmbed],
             })
 
+            
+
+
         } else {
             // Missing Perms 
             var deniedEmbed = new MessageEmbed()
