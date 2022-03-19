@@ -57,7 +57,7 @@ module.exports = {
 		
 		console.log(`Schedule triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
 
-		var interactionTimeout = ((300)*60*1000)	// 300 Minutes * 60 to make into seconds * 1000 to make it into miliseconds
+		var interactionTimeout = ((150)*60*1000)	// 150 Minutes * 60 to make into seconds * 1000 to make it into miliseconds
 
 		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout });
 
@@ -117,8 +117,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton();
 
-                await i.deleteReply();
-				await i.followUp({
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -145,8 +144,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 
-                await i.deleteReply();
-				await i.followUp({
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
