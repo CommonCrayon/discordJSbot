@@ -4,5 +4,6 @@ node_modules
 config.json
 process.env
 run.bat
+commands/serverinfo
 data/
 

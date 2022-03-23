@@ -1,3 +1,6 @@
+
+// NOT USED CURRENTLY WILL FINISH
+
 var request = require('request');
 var options = {
   'method': 'POST',
