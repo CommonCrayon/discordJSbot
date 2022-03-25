@@ -17,7 +17,12 @@ module.exports = {
             .addFields(
                 { name: '\u200B', value: '**User Commands**' },
                 { name: '/help', value: 'Displays This!' },
-                { name: '/trivia', value: 'Play a Trivia Question!' },
+                { name: '/5man', value: 'Run a 5 Man Queue! (2.5 Hours)' },
+                { name: '/trivia', value: 'Play a Trivia Question!\n' },
+
+                { name: '/subscribe', value: 'Subscribe to get notified by the Scheduler!' },
+                { name: '/unsubscribe', value: 'Unsubscribe to not get notified by the Scheduler!' },
+
 
                 { name: '\u200B', value: '**Admin Commands**' },
                 { name: '/schedule', value: 'Schedules a 10 Man\n' },

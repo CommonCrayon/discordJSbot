@@ -4,17 +4,9 @@ const axios = require('axios');
 const { decode } = require('html-entities');
 
 module.exports = {
-	data: new SlashCommandBuilder().setName('trivia').setDescription('Start a Trivia Marathon in a Thread!'),
+	data: new SlashCommandBuilder().setName('trivia').setDescription('Play a Trivia Question!'),
 
 	async execute(interaction) {
-
-		/*
-		const triviaThread = await channel.threads.create({
-			name: 'trivia-marathon',
-			autoArchiveDuration: 60,
-			reason: 'Trivia Marathon!',
-		});
-		*/
 
 		// Get Trivia question
 		if (Math.random() < 0.5) {

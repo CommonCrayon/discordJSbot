@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('5man')
-		.setDescription('Runs a 5 Man Queue!'),
+		.setDescription('Run a 5 Man Queue!'),
 
 
 	async execute(interaction) {
