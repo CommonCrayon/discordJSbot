@@ -6,7 +6,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedule')
 		.setDescription('Schedules 10man!')
-		.addStringOption(option => option.setName('time').setDescription('Enter a Time').setRequired(true)),
+		.addStringOption(option => option.setName('time').setDescription('Enter a Time (20:30)').setRequired(true)),
 
 
 	async execute(interaction) {
@@ -91,25 +91,23 @@ module.exports = {
 			});
 			
 			var yesEntry = [];
-			var maybeEntry = [];
 			var noEntry = [];
 
 			timeScheduled = interaction.options.getString('time');
 
-			var [countdownHour, countdownMinute, totalMinutes] = getCountdown(timeScheduled);
+			var [countdownHour, countdownMinute, totalMinutes, epochTime] = getCountdown(timeScheduled);
+
 
 			// Embed 
 			var mainEmbed = new MessageEmbed()
-				.setThumbnail('https://imgur.com/vUG7MDU.png')
 				.setColor('0xFF6F00')
 				.setTitle('10 Man')
 				.setURL('https://10man.commoncrayon.com/')
 				.setDescription('Join a 10 Man!')
 				.addFields(
-					{ name: 'Time:', value: timeScheduled + " CET"},
+					{ name: 'Time:', value: `<t:${epochTime}>`},
 					{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
 					{ name: '__Yes:__', value: 'Empty' , inline: true},
-					{ name: '__Maybe:__', value: 'Empty', inline: true },
 					{ name: '__No:__', value: 'Empty', inline: true },
 					)
 				.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
@@ -128,7 +126,7 @@ module.exports = {
 						.setCustomId('maybe')
 						.setLabel('Maybe')
 						.setStyle('PRIMARY')
-						.setEmoji('🤷'),
+						.setEmoji('🔸'),
 
 					new MessageButton()
 						.setCustomId('no')
@@ -149,10 +147,6 @@ module.exports = {
 				components: [buttons]
 			});
 
-			/*await interaction.followUp(
-				{
-				content: mentionSubs,
-			})	*/
 
 		} else {
 			// Missing Perms 
@@ -173,7 +167,6 @@ module.exports = {
 		timeScheduled = interaction.options.getString('time');	//Getting String for timeScheduled posted in Time embed.
 
 		var interactionTimeout = ((30 + totalMinutes)*60*1000)	// 30 Minutes + Minutes of the countdown * 60 to make into seconds * 1000 to make it into miliseconds
-
 		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout });
 
 		collector.on('collect', async i => {
@@ -191,8 +184,8 @@ module.exports = {
 					yesEntry.splice(yesEntry.indexOf(user), 1);
 				}
 
-				if (maybeEntry.indexOf(user) > -1) {
-					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				if (yesEntry.indexOf(user + " 🔸") > -1) {
+					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
 				}
 
 				if (noEntry.indexOf(user) > -1) {
@@ -202,8 +195,8 @@ module.exports = {
 				yesEntry.push(user);
 
 
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
+				let [yesString, noString] = createString(yesEntry, noEntry); //array size
+				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton(); 
 
 				await i.editReply({
@@ -219,18 +212,18 @@ module.exports = {
 					yesEntry.splice(yesEntry.indexOf(user), 1);
 				}
 
-				if (maybeEntry.indexOf(user) > -1) {
-					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				if (yesEntry.indexOf(user + " 🔸") > -1) {
+					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
 				}
 
 				if (noEntry.indexOf(user) > -1) {
 					noEntry.splice(noEntry.indexOf(user), 1);
 				}
 
-				maybeEntry.push(user);
+				yesEntry.push(user + " 🔸");
 
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
+				let [yesString, noString] = createString(yesEntry, noEntry);
+				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton();
 
 				await i.editReply({
@@ -246,8 +239,8 @@ module.exports = {
 					yesEntry.splice(yesEntry.indexOf(user), 1);
 				}
 
-				if (maybeEntry.indexOf(user) > -1) {
-					maybeEntry.splice(maybeEntry.indexOf(user), 1);
+				if (yesEntry.indexOf(user + " 🔸") > -1) {
+					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
 				}
 
 				if (noEntry.indexOf(user) > -1) {
@@ -256,8 +249,8 @@ module.exports = {
 
 				noEntry.push(user);
 
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
+				let [yesString, noString] = createString(yesEntry, noEntry);
+				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton(); 
 
 				await i.editReply({
@@ -269,8 +262,8 @@ module.exports = {
 			else if (buttonClicked === "update") {
 				await i.deferUpdate();
 
-				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry); 
+				let [yesString, noString] = createString(yesEntry, noEntry);
+				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton(); 
 
 				await i.editReply({
@@ -317,9 +310,9 @@ module.exports = {
 };
 
 
-function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, maybeEntry, noEntry) {
+function createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry) {
 
-	let [countdownHour, countdownMinute, totalMinutes] = getCountdown(timeScheduled);
+	let [countdownHour, countdownMinute, totalMinutes, epochTime] = getCountdown(timeScheduled);
 
 	if (totalMinutes > 0) {
 		var countdownOutput = (`Starting in ${countdownHour}H ${countdownMinute}M`);
@@ -334,10 +327,9 @@ function createEmbed(yesString, maybeString, noString, timeScheduled, yesEntry, 
 	.setURL('https://10man.commoncrayon.com/')
 	.setDescription('Join a 10 Man!')
 	.addFields(
-		{ name: 'Time:', value: timeScheduled + " CET" },
+		{ name: 'Time:', value: `<t:${epochTime}>` },
 		{ name: '🔄 Countdown:', value: countdownOutput},
 		{ name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
-		{ name: `__Maybe(${maybeEntry.length}):__`, value: maybeString, inline: true },
 		{ name: `__No(${noEntry.length}):__`, value: noString, inline: true },
 		)
 	.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png')
@@ -359,7 +351,7 @@ function createButton() {
 				.setCustomId('maybe')
 				.setLabel('Maybe')
 				.setStyle('PRIMARY')
-				.setEmoji('🤷'),
+				.setEmoji('🔸'),
 
 			new MessageButton()
 				.setCustomId('no')
@@ -376,7 +368,7 @@ function createButton() {
 }
 
 
-function createString(yesEntry, maybeEntry, noEntry) {
+function createString(yesEntry, noEntry) {
 	// For Yes
 	if (yesEntry.length == 0){
 		yesString = "Empty";
@@ -384,18 +376,13 @@ function createString(yesEntry, maybeEntry, noEntry) {
 	else {
 		yesString = "";
 		for (var l = 0; l < yesEntry.length; l++) {
-			yesString = (yesString + yesEntry[l] + '\n');
-		}
-	}
-
-	// For Maybe
-	if (maybeEntry.length == 0){
-		maybeString = "Empty";
-	}
-	else {
-		maybeString = "";
-		for (var l = 0; l < maybeEntry.length; l++) {
-			maybeString = (maybeString + maybeEntry[l] + '\n');
+			if (l == 9) {
+				yesString = (yesString + yesEntry[l] + '\n🔹 10 Players🔹\n');
+			}
+			else {
+				yesString = (yesString + yesEntry[l] + '\n');
+			}
+			
 		}
 	}
 
@@ -410,7 +397,7 @@ function createString(yesEntry, maybeEntry, noEntry) {
 		}
 	}
 
-	return [yesString, maybeString, noString];
+	return [yesString, noString];
 }
 
 
@@ -418,7 +405,7 @@ function getCountdown(timeScheduled) {
     const scheduledTimeArray = timeScheduled.split(":");
 
     var d = new Date();
-    var cetHour = d.getUTCHours()+1;  //CHANGE FOR CET/CEST
+    var cetHour = d.getUTCHours()+2;  //CHANGE FOR CET/CEST
     var cetMinute = d.getUTCMinutes();
     
     var cetTime = (cetHour*60 + cetMinute);
@@ -435,7 +422,13 @@ function getCountdown(timeScheduled) {
     countdownHour = Math.floor(totalMinutes / 60);
     countdownMinute = (totalMinutes - countdownHour*60);
 
-    return [countdownHour, countdownMinute, totalMinutes];
+	// Get Epoch Time
+	var epochTime = new Date();
+	epochTime.setHours(integerUTCHour+10, integerUTCMin, 0, 0); // CET/CEST might change things!
+	var epochTime = String(epochTime.getTime());
+	epochTime = epochTime.slice(0, -3)
+
+    return [countdownHour, countdownMinute, totalMinutes, epochTime];
 }
 
 

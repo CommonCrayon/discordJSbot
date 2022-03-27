@@ -30,19 +30,19 @@ module.exports = {
         var buttons = new MessageActionRow()
             .addComponents(
                 new MessageButton()
-                    .setCustomId('yes')
+                    .setCustomId('yes5man')
                     .setLabel('Yes')
                     .setStyle('SUCCESS')
                     .setEmoji('👍'),
 
                 new MessageButton()
-                    .setCustomId('maybe')
+                    .setCustomId('maybe5man')
                     .setLabel('Maybe')
                     .setStyle('PRIMARY')
                     .setEmoji('🤷'),
 
                 new MessageButton()
-                    .setCustomId('no')
+                    .setCustomId('no5man')
                     .setLabel('No')
                     .setStyle('DANGER')
                     .setEmoji('👎'),
@@ -159,21 +159,21 @@ module.exports = {
 			var buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
-					.setCustomId('yes')
+					.setCustomId('yes5man')
 					.setLabel('Yes')
 					.setStyle('SUCCESS')
 					.setEmoji('👍')
 					.setDisabled(true),
 
 				new MessageButton()
-					.setCustomId('maybe')
+					.setCustomId('maybe5man')
 					.setLabel('Maybe')
 					.setStyle('PRIMARY')
 					.setEmoji('🤷')
 					.setDisabled(true),
 
 				new MessageButton()
-					.setCustomId('no')
+					.setCustomId('no5man')
 					.setLabel('No')
 					.setStyle('DANGER')
 					.setEmoji('👎')
@@ -208,19 +208,19 @@ function createButton() {
 	var buttons = new MessageActionRow()
 		.addComponents(
 			new MessageButton()
-				.setCustomId('yes')
+				.setCustomId('yes5man')
 				.setLabel('Yes')
 				.setStyle('SUCCESS')
 				.setEmoji('👍'),
 
 			new MessageButton()
-				.setCustomId('maybe')
+				.setCustomId('maybe5man')
 				.setLabel('Maybe')
 				.setStyle('PRIMARY')
 				.setEmoji('🤷'),
 
 			new MessageButton()
-				.setCustomId('no')
+				.setCustomId('no5man')
 				.setLabel('No')
 				.setStyle('DANGER')
 				.setEmoji('👎'),
