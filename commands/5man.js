@@ -67,7 +67,7 @@ module.exports = {
 			buttonClicked = (i.customId);
 			console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
-			if (buttonClicked === "yes" ) {
+			if (buttonClicked === "yes5man" ) {
 				await i.deferUpdate();
 
 				if (yesEntry.indexOf(user) > -1) {
@@ -96,7 +96,7 @@ module.exports = {
 				});
 			}
 
-			else if (buttonClicked === "maybe" ) {
+			else if (buttonClicked === "maybe5man" ) {
 				await i.deferUpdate();
 
 				if (yesEntry.indexOf(user) > -1) {
@@ -123,7 +123,7 @@ module.exports = {
 				});
 			}
 
-			else if (buttonClicked === "no") {
+			else if (buttonClicked === "no5man") {
 				await i.deferUpdate();
 
 				if (yesEntry.indexOf(user) > -1) {

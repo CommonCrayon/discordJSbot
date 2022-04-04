@@ -181,20 +181,23 @@ module.exports = {
 				await i.deferUpdate();
 
 				if (yesEntry.indexOf(user) > -1) {
-					yesEntry.splice(yesEntry.indexOf(user), 1);
+					return
 				}
 
-				if (yesEntry.indexOf(user + " 🔸") > -1) {
-					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
+				else if (yesEntry.indexOf(user + " 🔸") > -1) {
+					yesEntry[yesEntry.indexOf(user + " 🔸")] = user;
 				}
 
-				if (noEntry.indexOf(user) > -1) {
+				else if (noEntry.indexOf(user) > -1) {
 					noEntry.splice(noEntry.indexOf(user), 1);
+					yesEntry.push(user);
 				}
 
-				yesEntry.push(user);
+				else {
+					yesEntry.push(user);
+				}
 
-
+				
 				let [yesString, noString] = createString(yesEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton(); 
@@ -209,18 +212,23 @@ module.exports = {
 				await i.deferUpdate();
 
 				if (yesEntry.indexOf(user) > -1) {
-					yesEntry.splice(yesEntry.indexOf(user), 1);
+					yesEntry[yesEntry.indexOf(user)] = (user + " 🔸");
 				}
 
-				if (yesEntry.indexOf(user + " 🔸") > -1) {
-					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
+				else if (yesEntry.indexOf(user + " 🔸") > -1) {
+					return
 				}
 
-				if (noEntry.indexOf(user) > -1) {
+				else if (noEntry.indexOf(user) > -1) {
 					noEntry.splice(noEntry.indexOf(user), 1);
+					yesEntry.push(user + " 🔸");
 				}
 
-				yesEntry.push(user + " 🔸");
+				else {
+					yesEntry.push(user + " 🔸");
+				}
+
+				
 
 				let [yesString, noString] = createString(yesEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
@@ -237,17 +245,23 @@ module.exports = {
 
 				if (yesEntry.indexOf(user) > -1) {
 					yesEntry.splice(yesEntry.indexOf(user), 1);
+					noEntry.push(user);
 				}
 
-				if (yesEntry.indexOf(user + " 🔸") > -1) {
+				else if (yesEntry.indexOf(user + " 🔸") > -1) {
 					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
+					noEntry.push(user);
 				}
 
-				if (noEntry.indexOf(user) > -1) {
-					noEntry.splice(noEntry.indexOf(user), 1);
+				else if (noEntry.indexOf(user) > -1) {
+					return
 				}
 
-				noEntry.push(user);
+				else {
+					noEntry.push(user);
+				}
+
+				
 
 				let [yesString, noString] = createString(yesEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
@@ -377,7 +391,7 @@ function createString(yesEntry, noEntry) {
 		yesString = "";
 		for (var l = 0; l < yesEntry.length; l++) {
 			if (l == 9) {
-				yesString = (yesString + yesEntry[l] + '\n🔹 10 Players🔹\n');
+				yesString = (yesString + yesEntry[l] + '\n🔹➖➖➖➖🔹\n');
 			}
 			else {
 				yesString = (yesString + yesEntry[l] + '\n');
@@ -424,7 +438,7 @@ function getCountdown(timeScheduled) {
 
 	// Get Epoch Time
 	var epochTime = new Date();
-	epochTime.setHours(integerUTCHour+10, integerUTCMin, 0, 0); // CET/CEST might change things!
+	epochTime.setHours(integerUTCHour+8, integerUTCMin, 0, 0); // CET/CEST might change things!
 	var epochTime = String(epochTime.getTime());
 	epochTime = epochTime.slice(0, -3)
 
@@ -444,6 +458,7 @@ function assignPriority(user) {
 		"CaJeB3",
 		"ShadowPoor",
 		"Rik",
+		"Jeppi",
 		"CommonCrayon",
 		"Thisted",
 	]; 
