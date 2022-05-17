@@ -106,7 +106,7 @@ module.exports = {
 				.setDescription('Join a 10 Man!')
 				.addFields(
 					{ name: 'Time:', value: `<t:${epochTime}>`},
-					{ name: '🔄 Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
+					{ name: 'Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
 					{ name: '__Yes:__', value: 'Empty' , inline: true},
 					{ name: '__No:__', value: 'Empty', inline: true },
 					)
@@ -133,11 +133,6 @@ module.exports = {
 						.setLabel('No')
 						.setStyle('DANGER')
 						.setEmoji('👎'),
-
-					new MessageButton()
-						.setCustomId('update')
-						.setStyle('SECONDARY')
-						.setEmoji('🔄'),
 				);
 
 			await interaction.reply(
@@ -166,8 +161,28 @@ module.exports = {
 
 		timeScheduled = interaction.options.getString('time');	//Getting String for timeScheduled posted in Time embed.
 
-		var interactionTimeout = ((30 + totalMinutes)*60*1000)	// 30 Minutes + Minutes of the countdown * 60 to make into seconds * 1000 to make it into miliseconds
-		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout });
+		const reply = await interaction.fetchReply()
+
+		const intervalId = setInterval(() => {
+			let [yesString, noString] = createString(yesEntry, noEntry); //array size
+			let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry);
+			let buttons = createButton();
+			const [, , totalMinutes,] = getCountdown(timeScheduled)
+
+			if (totalMinutes < 0) { // stop updating when time 
+				clearInterval(intervalId);
+			}
+			reply.edit({
+				embeds: [mainEmbed],
+				components: [buttons],
+			});
+		}, 6000);
+
+		const totalMinutesNum = totalMinutes;
+		const interactionTimeout = (30 + totalMinutesNum) * 60 * 1000;
+		const collector = reply.createMessageComponentCollector({
+			time: interactionTimeout,
+		});
 
 		collector.on('collect', async i => {
 			
@@ -272,19 +287,6 @@ module.exports = {
 					components: [buttons],
 				});
 			}
-
-			else if (buttonClicked === "update") {
-				await i.deferUpdate();
-
-				let [yesString, noString] = createString(yesEntry, noEntry);
-				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
-				let buttons = createButton(); 
-
-				await i.editReply({
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
-			}
 		});;
 
 
@@ -342,7 +344,7 @@ function createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry) {
 	.setDescription('Join a 10 Man!')
 	.addFields(
 		{ name: 'Time:', value: `<t:${epochTime}>` },
-		{ name: '🔄 Countdown:', value: countdownOutput},
+		{ name: 'Countdown:', value: countdownOutput},
 		{ name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
 		{ name: `__No(${noEntry.length}):__`, value: noString, inline: true },
 		)
@@ -372,11 +374,6 @@ function createButton() {
 				.setLabel('No')
 				.setStyle('DANGER')
 				.setEmoji('👎'),
-
-			new MessageButton()
-				.setCustomId('update')
-				.setStyle('SECONDARY')
-				.setEmoji('🔄'),
 		);
 	return buttons;
 }
