@@ -163,20 +163,32 @@ module.exports = {
 
 		const reply = await interaction.fetchReply()
 
-		const intervalId = setInterval(() => {
+		let doingUpdate = false;
+
+		const doUpdate = async () => {
+			if (doingUpdate)
+			{// doing update, try again later
+				setTimeout(doUpdate, 1000);
+				console.log('Skipping update')
+				return;
+			}
+
 			let [yesString, noString] = createString(yesEntry, noEntry); //array size
 			let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry);
 			let buttons = createButton();
 			const [, , totalMinutes,] = getCountdown(timeScheduled)
 
-			if (totalMinutes < 0) { // stop updating when time 
-				clearInterval(intervalId);
-			}
-			reply.edit({
+			await reply.edit({
 				embeds: [mainEmbed],
 				components: [buttons],
 			});
-		}, 6000);
+
+			if (totalMinutes >= 0) // stop updating when time 
+				setTimeout(doUpdate, 60000);
+			else
+				console.log('Update stopped')
+		}
+		setTimeout(doUpdate, 60000);
 
 		const totalMinutesNum = totalMinutes;
 		const interactionTimeout = (30 + totalMinutesNum) * 60 * 1000;
@@ -187,6 +199,7 @@ module.exports = {
 		collector.on('collect', async i => {
 			
 			user = (i.user.username);
+			doingUpdate = true;
 			buttonClicked = (i.customId);
 			console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
@@ -287,6 +300,8 @@ module.exports = {
 					components: [buttons],
 				});
 			}
+
+			doingUpdate = false;
 		});;
 
 
