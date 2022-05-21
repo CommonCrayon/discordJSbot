@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,51 +12,16 @@ module.exports = {
 
 	async execute(interaction) {
 
-        // GETTING ADMIN LIST
-		// open the database
-		let db = new sqlite3.Database('./commands/database/admins.db', sqlite3.OPEN_READWRITE, (err) => {
-            if (err) {
-              console.error(err.message);
-            }
-            console.log('Connected to the database.');
-        });
-  
-  
-        // Getting all the rows in the database
-        function getData() {
-            return new Promise((resolve, reject) => {
-                db.all(`SELECT userid as id FROM admins`, (err, row) => {
-                    if (err) { reject(err); }
-                    resolve(row);
-                });
-            })
-        }
-  
-        const data = await getData();
-
-        function getAdmins(data) {
-            return new Promise((resolve) => {
-                var admin = [];
-                for (const item of data) {
-                    admin.push(item.id)
-                }
-                resolve(admin);
-            })
-        }
-  
-        const admin = await getAdmins(data);
-          
-        db.close((err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Close the database connection.');
-        });
-		
+        // Checking if user is an admin
+		let student = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
+		let adminCheck = false;
+		for (let i = 0; i < student.admins.length; i++) {
+			if ((student.admins[i].userid) == (interaction.user.id)) {
+				adminCheck = true;
+			}
+		}
         
-        if (admin.includes(interaction.user.id)) {
-
-
+        if (adminCheck) {
 			// open the database
 			let db = new sqlite3.Database('./commands/database/subscribers.db', sqlite3.OPEN_READWRITE, (err) => {
 				if (err) {
@@ -91,6 +57,7 @@ module.exports = {
 			});
 			
 			var yesEntry = [];
+			var maybeMention = [];
 			var noEntry = [];
 
 			timeScheduled = interaction.options.getString('time');
@@ -144,24 +111,17 @@ module.exports = {
 
 
 		} else {
-			// Missing Perms 
-			var deniedEmbed = new MessageEmbed()
-				.setColor('0xFF6F00')
-				.setTitle('Permission Denied')
-				.setDescription('Must be an Admin')
-
-			await interaction.reply(
-				{
-				embeds: [deniedEmbed], 
-				ephemeral: true 
-			})
+			// If user is not admin
+			var deniedEmbed = new MessageEmbed().setColor('0xFF6F00').setTitle('Permission Denied').setDescription('Must be an Admin')
+			await interaction.reply({ embeds: [deniedEmbed], ephemeral: true })
+			return;
 		}
 		
 		console.log(`Schedule triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
 
 		timeScheduled = interaction.options.getString('time');	//Getting String for timeScheduled posted in Time embed.
 
-		const reply = await interaction.fetchReply()
+		let reply = await interaction.fetchReply()
 
 		let doingUpdate = false;
 
@@ -175,13 +135,28 @@ module.exports = {
 
 			let [yesString, noString] = createString(yesEntry, noEntry); //array size
 			let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry);
-			let buttons = createButton();
 			const [, , totalMinutes,] = getCountdown(timeScheduled)
+			let buttons = createButton();
 
-			await reply.edit({
-				embeds: [mainEmbed],
-				components: [buttons],
-			});
+
+
+
+			if (totalMinutes == 60) {
+				let maybeString = ""
+				for (element in maybeMention) {
+					maybeString += (`<@${maybeMention[element]}> `)
+				}
+			
+				await interaction.followUp(`Select Yes or No for the 10 man:\n${maybeString}`);
+			} 
+			else {
+				await reply.edit({
+					embeds: [mainEmbed],
+					components: [buttons],
+				});
+			}
+
+
 
 			if (totalMinutes >= 0) // stop updating when time 
 				setTimeout(doUpdate, 60000);
@@ -201,7 +176,6 @@ module.exports = {
 			user = (i.user.username);
 			doingUpdate = true;
 			buttonClicked = (i.customId);
-			console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
 			user = assignPriority(user);
 
@@ -214,6 +188,7 @@ module.exports = {
 
 				else if (yesEntry.indexOf(user + " 🔸") > -1) {
 					yesEntry[yesEntry.indexOf(user + " 🔸")] = user;
+					maybeMention.pop(i.user.id);
 				}
 
 				else if (noEntry.indexOf(user) > -1) {
@@ -241,6 +216,7 @@ module.exports = {
 
 				if (yesEntry.indexOf(user) > -1) {
 					yesEntry[yesEntry.indexOf(user)] = (user + " 🔸");
+					maybeMention.push(i.user.id);
 				}
 
 				else if (yesEntry.indexOf(user + " 🔸") > -1) {
@@ -250,10 +226,12 @@ module.exports = {
 				else if (noEntry.indexOf(user) > -1) {
 					noEntry.splice(noEntry.indexOf(user), 1);
 					yesEntry.push(user + " 🔸");
+					maybeMention.push(i.user.id);
 				}
 
 				else {
 					yesEntry.push(user + " 🔸");
+					maybeMention.push(i.user.id);
 				}
 
 				
@@ -279,6 +257,7 @@ module.exports = {
 				else if (yesEntry.indexOf(user + " 🔸") > -1) {
 					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
 					noEntry.push(user);
+					maybeMention.pop(i.user.id);
 				}
 
 				else if (noEntry.indexOf(user) > -1) {
@@ -370,7 +349,26 @@ function createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry) {
 
 function createButton() {
 
-	var buttons = new MessageActionRow()
+	const [, , totalMinutes,] = getCountdown(timeScheduled)
+
+	if (totalMinutes <= 60 ) {
+		var buttons = new MessageActionRow()
+		.addComponents(
+			new MessageButton()
+				.setCustomId('yes')
+				.setLabel('Yes')
+				.setStyle('SUCCESS')
+				.setEmoji('👍'),
+
+
+			new MessageButton()
+				.setCustomId('no')
+				.setLabel('No')
+				.setStyle('DANGER')
+				.setEmoji('👎'),
+		);
+	} else {
+		var buttons = new MessageActionRow()
 		.addComponents(
 			new MessageButton()
 				.setCustomId('yes')
@@ -390,6 +388,7 @@ function createButton() {
 				.setStyle('DANGER')
 				.setEmoji('👎'),
 		);
+	}
 	return buttons;
 }
 
@@ -450,7 +449,7 @@ function getCountdown(timeScheduled) {
 
 	// Get Epoch Time
 	var epochTime = new Date();
-	epochTime.setHours(integerUTCHour+8, integerUTCMin, 0, 0); // CET/CEST might change things!
+	epochTime.setHours(integerUTCHour-16, integerUTCMin, 0, 0); // CET/CEST might change things!
 	var epochTime = String(epochTime.getTime());
 	epochTime = epochTime.slice(0, -3)
 
