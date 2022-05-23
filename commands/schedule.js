@@ -56,7 +56,7 @@ module.exports = {
 				console.log('Close the database connection.');
 			});
 			
-			var yesEntry = [];
+			var yesEntry = ["🎗️CommonCrayon 🔸"];
 			var maybeMention = [];
 			var noEntry = [];
 
@@ -77,7 +77,7 @@ module.exports = {
 					{ name: '__Yes:__', value: 'Empty' , inline: true},
 					{ name: '__No:__', value: 'Empty', inline: true },
 					)
-				.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png');
+				.setFooter({ text:'Server IP: connect crayon.csgo.fr:27015; password fun', iconURL: 'https://i.imgur.com/nuEpvJd.png'})
 
 			
 			// Buttons
@@ -146,8 +146,13 @@ module.exports = {
 				for (element in maybeMention) {
 					maybeString += (`<@${maybeMention[element]}> `)
 				}
+
+				await reply.edit({
+					embeds: [mainEmbed],
+					components: [buttons],
+				});
 			
-				await interaction.followUp(`Select Yes or No for the 10 man:\n${maybeString}`);
+				await reply.followUp(`Select Yes or No for the 10 man:\n${maybeString}`);
 			} 
 			else {
 				await reply.edit({
@@ -342,7 +347,7 @@ function createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry) {
 		{ name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
 		{ name: `__No(${noEntry.length}):__`, value: noString, inline: true },
 		)
-	.setFooter('Server IP: connect crayon.csgo.fr:27015; password fun', 'https://i.imgur.com/nuEpvJd.png')
+	.setFooter({ text:'Server IP: connect crayon.csgo.fr:27015; password fun', iconURL: 'https://i.imgur.com/nuEpvJd.png'})
 	return mainEmbed;
 }
 
