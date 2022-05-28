@@ -13,10 +13,10 @@ module.exports = {
 	async execute(interaction) {
 
         // Checking if user is an admin
-		let student = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
+		let adminJson = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
 		let adminCheck = false;
-		for (let i = 0; i < student.admins.length; i++) {
-			if ((student.admins[i].userid) == (interaction.user.id)) {
+		for (let i = 0; i < adminJson.admins.length; i++) {
+			if ((adminJson.admins[i].userid) == (interaction.user.id)) {
 				adminCheck = true;
 			}
 		}
@@ -140,26 +140,20 @@ module.exports = {
 
 
 
-
+			/*
 			if (totalMinutes == 60) {
 				let maybeString = ""
 				for (element in maybeMention) {
 					maybeString += (`<@${maybeMention[element]}> `)
 				}
-
-				await reply.edit({
-					embeds: [mainEmbed],
-					components: [buttons],
-				});
 			
-				await reply.followUp(`Select Yes or No for the 10 man:\n${maybeString}`);
-			} 
-			else {
-				await reply.edit({
-					embeds: [mainEmbed],
-					components: [buttons],
-				});
-			}
+				//await reply.followUp(`Select Yes or No for the 10 man:\n${maybeString}`);
+			} */
+
+			await reply.edit({
+				embeds: [mainEmbed],
+				components: [buttons],
+			});
 
 
 
