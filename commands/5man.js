@@ -55,17 +55,22 @@ module.exports = {
         });
 
 		
-		console.log(`Schedule triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
+		console.log(`5man triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
+		let reply = await interaction.fetchReply();
+		const interactionTimeout = (300 * 60 * 1000); // 5 hours
+		let collector = reply.createMessageComponentCollector({time: interactionTimeout});
 
-		var interactionTimeout = ((150)*60*1000)	// 150 Minutes * 60 to make into seconds * 1000 to make it into miliseconds
 
-		const collector = interaction.channel.createMessageComponentCollector({ time: interactionTimeout });
+		function setCollector(collectorValue) {
+			collector = collectorValue;
+		}
+
 
 		collector.on('collect', async i => {
 			
 			user = (i.user.username);
 			buttonClicked = (i.customId);
-			console.log(`Schedule Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
+			console.log(`5man Button Clicked:\n   User: ${user}\n   ButtonClicked: ${buttonClicked}`);
 
 			if (buttonClicked === "yes5man" ) {
 				await i.deferUpdate();
@@ -89,8 +94,7 @@ module.exports = {
 				let mainEmbed = createEmbed(yesString, maybeString, noString, yesEntry, maybeEntry, noEntry); 
 				let buttons = createButton(); 
 
-                await i.deleteReply();
-				await i.followUp({
+				await i.editReply({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
@@ -150,40 +154,6 @@ module.exports = {
 				});
 			}
 		});;
-
-
-		// 30 Minutes after Scheduled time has passed.
-		collector.on('end', async i => {
-			console.log("Ended 5Man Message");
-
-			var buttons = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('yes5man')
-					.setLabel('Yes')
-					.setStyle('SUCCESS')
-					.setEmoji('👍')
-					.setDisabled(true),
-
-				new MessageButton()
-					.setCustomId('maybe5man')
-					.setLabel('Maybe')
-					.setStyle('PRIMARY')
-					.setEmoji('🤷')
-					.setDisabled(true),
-
-				new MessageButton()
-					.setCustomId('no5man')
-					.setLabel('No')
-					.setStyle('DANGER')
-					.setEmoji('👎')
-					.setDisabled(true),
-			);
-
-			await interaction.editReply({
-				components: [buttons]
-			});
-		});
 	},
 };
 

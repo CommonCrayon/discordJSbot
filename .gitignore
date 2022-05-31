@@ -7,3 +7,5 @@ commands/serverinfo/serverinfo.txt
 commands/serverinfo/serverpw.txt
 data/
 
+commands/serverinfo/steamtoken.txt
+log.txt

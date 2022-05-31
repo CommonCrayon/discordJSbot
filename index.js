@@ -37,9 +37,13 @@ client.on('interactionCreate', async interaction => {
 });
 
 
+
 //On Discord Api Error 
 process.on('unhandledRejection', error => {
 	console.error(error);
+	fs.appendFile('log.txt', ('\n'.concat(error)), function (err) {
+		if (err) return console.log(err);
+	});
 });
 
 client.login(token);
