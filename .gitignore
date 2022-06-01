@@ -3,9 +3,7 @@
 node_modules
 config.json
 process.env
-commands/serverinfo/serverinfo.txt
-commands/serverinfo/serverpw.txt
 data/
 
-commands/serverinfo/steamtoken.txt
 log.txt
+commands/database/secretinfo.json

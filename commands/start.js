@@ -5,11 +5,15 @@ const fs = require('fs');
 const voice = require('../events/voiceStateUpdate');
 const request = require('request');
 
-const serverIP = fs.readFileSync('commands/serverinfo/serverinfo.txt', 'utf8')
-const serverPW = fs.readFileSync('commands/serverinfo/serverpw.txt', 'utf8')
-const conn = new Rcon(serverIP, 27015, serverPW);
+let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
+const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
-const mapsOfNoTrades = fs.readFileSync('commands/serverinfo/channel-mapsofnotrades.txt', 'utf8')
+// Sleep Function
+function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -23,9 +27,7 @@ module.exports = {
 		let adminJson = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
 		let adminCheck = false;
 		for (let i = 0; i < adminJson.admins.length; i++) {
-			if ((adminJson.admins[i].userid) == (interaction.user.id)) {
-				adminCheck = true;
-			}
+			if ((adminJson.admins[i].userid) == (interaction.user.id)) adminCheck = true;
 		}
 
         
@@ -62,10 +64,6 @@ module.exports = {
                     bListString += `<@${element2}>\n`
                 }
 
-                const content = "List A and B:\n".concat(aListString.concat("\n".concat(bListString)));
-                fs.appendFile('./log.txt', "\n".concat(content), function (err) {
-                    if (err) return console.log(err);
-                });
 
                 // GET MAP NAME AND THUMBNAIL
                 conn.on('auth', function() {
@@ -77,8 +75,6 @@ module.exports = {
                         let workshopid = mapStr.split("/")[1];
 
                         if (workshopid != undefined) {
-
-                            console.log(workshopid);
     
                             var options = {
                                 'method': 'POST',
@@ -110,14 +106,16 @@ module.exports = {
                                             )
                                         .setImage(mapImage);
                                     
-                    
-                                    await interaction.guild.channels.cache.get(`${mapsOfNoTrades}`).send({ embeds: [matchEmbed]});
-                                    // Maps-of-No-Trades: 843111309058899998
+                                    
+                                    await sleep(10000);
+                                    await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send({ embeds: [matchEmbed]});
+                                    
     
                                 } catch (error) {
                                     console.log("request():\n" + error)
                                 }
                             });
+                            
                         } else console.log("Skipping Undefinied");
 
 

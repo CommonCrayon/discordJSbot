@@ -1,7 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 var Rcon = require('rcon');
-const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs')
+const request = require('request');
+
+let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
+const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,81 +16,81 @@ module.exports = {
 
 	async execute(interaction) {
 
-        workshopid = interaction.options.getString('workshopid');
-       
-        // GETTING ADMIN LIST
-		// open the database
-		let db = new sqlite3.Database('./commands/database/admins.db', sqlite3.OPEN_READWRITE, (err) => {
-            if (err) {
-              console.error(err.message);
-            }
-            console.log('Connected to the database.');
-        });
-  
-  
-        // Getting all the rows in the database
-        function getData() {
-            return new Promise((resolve, reject) => {
-                db.all(`SELECT userid as id FROM admins`, (err, row) => {
-                    if (err) { reject(err); }
-                    resolve(row);
-                });
-            })
-        }
-  
-        const data = await getData();
+        const workshopid = interaction.options.getString('workshopid');
 
-        function getAdmins(data) {
-            return new Promise((resolve) => {
-                var admin = [];
-                for (const item of data) {
-                    admin.push(item.id)
-                }
-                resolve(admin);
-            })
-        }
-  
-        const admin = await getAdmins(data);
-          
-        db.close((err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Close the database connection.');
-        });
-
-
+        // Checking if user is an admin
+		let adminJson = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
+		let adminCheck = false;
+		for (let i = 0; i < adminJson.admins.length; i++) {
+			if ((adminJson.admins[i].userid) == (interaction.user.id)) adminCheck = true;
+		}
         
-        if (admin.includes(interaction.user.id)) {
-            const fs = require('fs')
-
-            const serverIP = fs.readFileSync('commands/serverinfo/serverinfo.txt', 'utf8')
-            const serverPW = fs.readFileSync('commands/serverinfo/serverpw.txt', 'utf8')
-
-            var conn = new Rcon(serverIP, 27015, serverPW);
+        if (adminCheck) {
+            console.log("Commencing /map " + workshopid);
             
             conn.on('auth', function() {
+                    conn.send(('host_workshop_map ').concat(workshopid));
 
-                conn.send(('host_workshop_map ').concat(workshopid));
-                }).on('response', function(str) {
-                console.log("Response: " + str);
                 }).on('error', function(err) {
-                console.log("Error: " + err);
-                }).on('end', function() {
-                console.log("Connection closed");
+                    console.log("Error: " + err);
             });
 
             conn.connect();
 
-            // Embed 
-            var mapEmbed = new MessageEmbed()
-                .setColor('0xFF6F00')
-                .setTitle('Successfully Changed Map to: ' + workshopid)
-                .setURL('https://steamcommunity.com/sharedfiles/filedetails/?id='.concat(workshopid))
+            try {
+                var options = {
+                    'method': 'POST',
+                    'url': 'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/',
+                    'headers': {
+                    },
+                    formData: {
+                    'itemcount': '1',
+                    'publishedfileids[0]': `${workshopid}`
+                    }
+                };
+                
+                request(options, async function (error, response) {
+                    if (error) throw new Error(error);
+                    try {
+                        let mapDetails = JSON.parse(response.body);
 
-            await interaction.reply(
-                { embeds: [mapEmbed],
-            })
+                        let mapURL = (`https://steamcommunity.com/sharedfiles/filedetails/?id=${workshopid}`);
+                        let mapName = (mapDetails.response.publishedfiledetails[0].title);
+                        let mapImage = (mapDetails.response.publishedfiledetails[0].preview_url);
+
+                        var mapEmbed = new MessageEmbed()
+                            .setColor('0xFF6F00')
+                            .setTitle(`Successfully Changed Map to: ${mapName}`)
+                            .setURL(mapURL)
+                            .setImage(mapImage)
+                            .setFooter({ text: `Workshop ID: ${workshopid}` });
+                        
+        
+                        await interaction.reply(
+                            { embeds: [mapEmbed],
+                        })
+
+                    } catch (error) {
+                        console.log("request():\n" + error)
+                    }
+                });
+
+            } catch (error) {
+
+                console.log(error);
+
+                var mapEmbed = new MessageEmbed()
+                    .setColor('0xFF6F00')
+                    .setTitle('Successfully Changed Map to: ' + workshopid)
+                    .setURL('https://steamcommunity.com/sharedfiles/filedetails/?id='.concat(workshopid))
+
+                await interaction.reply(
+                    { embeds: [mapEmbed],
+                })
+            }
+
+            conn.emit('end');
+            console.log('Completed /map');
         
         } else {
             // Missing Perms 

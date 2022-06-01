@@ -23,7 +23,8 @@ module.exports = {
                 { name: '__Yes:__', value: 'Empty' , inline: true},
                 { name: '__Maybe:__', value: 'Empty', inline: true },
                 { name: '__No:__', value: 'Empty', inline: true },
-                );
+                )
+			.setTimestamp();
 
         
         // Buttons
@@ -58,13 +59,7 @@ module.exports = {
 		console.log(`5man triggered by ${interaction.user.tag} in #${interaction.channel.name}.`);
 		let reply = await interaction.fetchReply();
 		const interactionTimeout = (300 * 60 * 1000); // 5 hours
-		let collector = reply.createMessageComponentCollector({time: interactionTimeout});
-
-
-		function setCollector(collectorValue) {
-			collector = collectorValue;
-		}
-
+		let collector = interaction.channel.createMessageComponentCollector({time: interactionTimeout});
 
 		collector.on('collect', async i => {
 			
@@ -92,12 +87,16 @@ module.exports = {
 
 				let [yesString, maybeString, noString] = createString(yesEntry, maybeEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, maybeString, noString, yesEntry, maybeEntry, noEntry); 
-				let buttons = createButton(); 
+				let buttons = createButton();
 
-				await i.editReply({
+				
+				await i.deleteReply();
+				await i.followUp({
 					embeds: [mainEmbed], 
 					components: [buttons],
 				});
+
+				await reply.delete();
 			}
 
 			else if (buttonClicked === "maybe5man" ) {
@@ -168,7 +167,8 @@ function createEmbed(yesString, maybeString, noString, yesEntry, maybeEntry, noE
             { name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
             { name: `__Maybe(${maybeEntry.length}):__`, value: maybeString, inline: true },
             { name: `__No(${noEntry.length}):__`, value: noString, inline: true },
-            );
+            )
+		.setTimestamp();
 	return mainEmbed;
 }
 

@@ -10,49 +10,14 @@ module.exports = {
 
 	async execute(interaction) {
 
-        // GETTING ADMIN LIST
-		// open the database
-		let db = new sqlite3.Database('./commands/database/admins.db', sqlite3.OPEN_READWRITE, (err) => {
-            if (err) {
-              console.error(err.message);
-            }
-            console.log('Connected to the database.');
-        });
-  
-  
-        // Getting all the rows in the database
-        function getData() {
-            return new Promise((resolve, reject) => {
-                db.all(`SELECT userid as id FROM admins`, (err, row) => {
-                    if (err) { reject(err); }
-                    resolve(row);
-                });
-            })
-        }
-  
-        const data = await getData();
-
-        function getAdmins(data) {
-            return new Promise((resolve) => {
-                var admin = [];
-                for (const item of data) {
-                    admin.push(item.id)
-                }
-                resolve(admin);
-            })
-        }
-  
-        const admin = await getAdmins(data);
-          
-        db.close((err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Close the database connection.');
-        });
-		
+        // Checking if user is an admin
+		let adminJson = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
+		let adminCheck = false;
+		for (let i = 0; i < adminJson.admins.length; i++) {
+			if ((adminJson.admins[i].userid) == (interaction.user.id)) adminCheck = true;
+		}
         
-        if (admin.includes(interaction.user.id)) {
+        if (adminCheck) {
 			// open the database
 			let db = new sqlite3.Database('./commands/database/10manpool.db', sqlite3.OPEN_READWRITE, (err) => {
 			if (err) {

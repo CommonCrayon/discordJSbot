@@ -1,36 +1,34 @@
 const fs = require('fs');
-const voice10man = fs.readFileSync('../commands/serverinfo/voice-10man.txt', 'utf8');
-const voiceCounterStrike = fs.readFileSync('../commands/serverinfo/voice-counterstrike.txt', 'utf8');
+let idsJson = JSON.parse(fs.readFileSync('events/voiceids.json'));
 
 let aList = [];
 let bList = [];
-let processing = false;
 
 
 module.exports = {
 	name: 'voiceStateUpdate',
 	async execute(oldState, newState) {
 
-		if (processing == false) {
-			processing = true;
-			// Procedures for Counter-Strike Voice Channel - 832598037598961684
-			if (newState.channelId == voice10man) {
-				aList.push(newState.id);
-			}
-			if (oldState.channelId == voice10man) {
-				aList.pop(oldState.id);
-			}
-			
-
-			// Procedures for 10-man Voice Channel - 843598844758982666
-			if (newState.channelId == voiceCounterStrike) {
-				bList.push(newState.id);
-			}
-			if (oldState.channelId == voiceCounterStrike) {
-				bList.pop(oldState.id);
-			}
-			processing = false;
+		// Procedures for Counter-Strike Voice Channel - 832598037598961684
+		if (newState.channelId == (`${idsJson.ids.voice10man}`)) {
+			aList.push(newState.id);
 		}
+		if (oldState.channelId == (`${idsJson.ids.voice10man}`)) {
+			aList.pop(oldState.id);
+		}
+
+		// Procedures for 10-man Voice Channel - 843598844758982666
+		if (newState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) {
+			bList.push(newState.id);
+		}
+		if (oldState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) {
+			bList.pop(oldState.id);
+		}
+
+		const content = "List A and B:\n".concat(aList.concat("\n".concat(bList)));
+		fs.appendFile('./log.txt', "\n".concat(content), function (err) {
+			if (err) return console.log(err);
+		});
 	},
 	getAList: () => {return aList;},
 	getBList: () => {return bList;},

@@ -1,7 +1,17 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 var Rcon = require('rcon');
-const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs')
+
+let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
+const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
+
+// Sleep Function
+function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,84 +22,58 @@ module.exports = {
 
 	async execute(interaction) {
 
-        // GETTING ADMIN LIST
-		// open the database
-		let db = new sqlite3.Database('./commands/database/admins.db', sqlite3.OPEN_READWRITE, (err) => {
-            if (err) {
-              console.error(err.message);
-            }
-            console.log('Connected to the database.');
-        });
-  
-  
-        // Getting all the rows in the database
-        function getData() {
-            return new Promise((resolve, reject) => {
-                db.all(`SELECT userid as id FROM admins`, (err, row) => {
-                    if (err) { reject(err); }
-                    resolve(row);
-                });
-            })
-        }
-  
-        const data = await getData();
+        command = interaction.options.getString('command');
 
-        function getAdmins(data) {
-            return new Promise((resolve) => {
-                var admin = [];
-                for (const item of data) {
-                    admin.push(item.id)
-                }
-                resolve(admin);
-            })
-        }
-  
-        const admin = await getAdmins(data);
-          
-        db.close((err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Close the database connection.');
-        });
+        // Checking if user is an admin
+		let adminJson = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
+		let adminCheck = false;
+		for (let i = 0; i < adminJson.admins.length; i++) {
+			if ((adminJson.admins[i].userid) == (interaction.user.id)) adminCheck = true;
+		}
         
-        
-        if (admin.includes(interaction.user.id)) {
-            command = interaction.options.getString('command');
+        if (adminCheck) {
+            console.log("Commencing /rcon " + command);
+            await interaction.deferReply();
 
-            const fs = require('fs')
-
-            const serverIP = fs.readFileSync('commands/serverinfo/serverinfo.txt', 'utf8')
-            const serverPW = fs.readFileSync('commands/serverinfo/serverpw.txt', 'utf8')
-
-            var conn = new Rcon(serverIP, 27015, serverPW);
-            
+            let content = '';
+           
             conn.on('auth', function() {
-    
-                console.log("Authenticated");
-                console.log("Sending command: " + command)
-    
-                conn.send(command);
-                }).on('response', function(str) {
-                console.log("Response: " + str); // HOW TO GET STR RESPONSE
+                    conn.send(command);
+                }).on('response', async function(str) {
+                    content = content.concat(str);
+                    console.log("Response: " + content);
+
                 }).on('error', function(err) {
-                console.log("Error: " + err);
-                }).on('end', function() {
-                console.log("Connection closed");
+                    console.log("Error: " + err);
+
+                }).on('end', async function() {
+                    console.log("Ended: " + content);
+
+
             });
     
             conn.connect();
-    
-    
-            // Embed 
-            var rconEmbed = new MessageEmbed()
-                .setColor('0xFF6F00')
-                .setTitle('Successfully sent command: ' + command)
-                .setDescription('RESPONSE WILL BE ADDED')
+            conn.emit('end');
 
-            await interaction.reply(
-                { embeds: [rconEmbed],
-            })
+            async function sendDelayMsg() {
+                await sleep(3000);
+                
+                try {
+                    // Embed 
+                    var rconEmbed = new MessageEmbed()
+                        .setColor('0xFF6F00')
+                        .setTitle('Successfully sent command: ' + command)
+                        .setDescription(`\u200b${content}`);
+    
+                    await interaction.editReply( { embeds: [rconEmbed]})
+                    
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            
+            await sendDelayMsg();
+            console.log("Completed /rcon");
         
         } else {
             // Missing Perms 

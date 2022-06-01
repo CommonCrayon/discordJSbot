@@ -3,6 +3,8 @@ const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 
+let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedule')
@@ -133,29 +135,52 @@ module.exports = {
 				return;
 			}
 
-			let [yesString, noString] = createString(yesEntry, noEntry); //array size
-			let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry);
 			const [, , totalMinutes,] = getCountdown(timeScheduled)
-			let buttons = createButton();
-
-
-
-			/*
+			
 			if (totalMinutes == 60) {
 				let maybeString = ""
-				for (element in maybeMention) {
-					maybeString += (`<@${maybeMention[element]}> `)
+				for (element in maybeMention) {maybeString += (`<@${maybeMention[element]}> `)}
+				if (maybeString != "") await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send(`Select Yes or No for the 10 man:\n${maybeString}`);
+			}
+
+			if (totalMinutes == 30) {
+				let maybeString = ""
+
+				function checkMaybe(yesEntry) {
+					for (element in yesEntry) {
+						if ((yesEntry[element]).includes('🔸')) {
+							return true;
+						}
+					}
+					return false;
 				}
-			
-				//await reply.followUp(`Select Yes or No for the 10 man:\n${maybeString}`);
-			} */
+
+				let i = 0;
+				do {
+					for (element in yesEntry) {
+						if ((yesEntry[element]).includes('🔸')) {
+							
+							let nopush = yesEntry[element];
+		
+							yesEntry.splice(element, 1);
+							noEntry.push(nopush.slice(0, -3));
+						}
+					}
+				} while (checkMaybe(yesEntry));
+
+
+				for (element in maybeMention) {maybeString += (`<@${maybeMention[element]}> `)}
+				if (maybeString != "") await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send(`Moved to No:\n${maybeString}`);
+			}
+
+			let [yesString, noString] = createString(yesEntry, noEntry); //array size
+			let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry);
+			let buttons = createButton();
 
 			await reply.edit({
 				embeds: [mainEmbed],
 				components: [buttons],
 			});
-
-
 
 			if (totalMinutes >= 0) // stop updating when time 
 				setTimeout(doUpdate, 60000);
