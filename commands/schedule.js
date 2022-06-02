@@ -11,9 +11,7 @@ module.exports = {
 		.setDescription('Schedules 10man!')
 		.addStringOption(option => option.setName('time').setDescription('Enter a Time (20:30)').setRequired(true)),
 
-
 	async execute(interaction) {
-
         // Checking if user is an admin
 		let adminJson = JSON.parse(fs.readFileSync('./commands/database/admin.json'));
 		let adminCheck = false;
@@ -26,13 +24,10 @@ module.exports = {
         if (adminCheck) {
 			// open the database
 			let db = new sqlite3.Database('./commands/database/subscribers.db', sqlite3.OPEN_READWRITE, (err) => {
-				if (err) {
-				console.error(err.message);
-				}
+				if (err) console.error(err.message);
 				console.log('Connected to the database.');
 			});
-	
-	
+		
 			// Getting all the rows in the database
 			function getData() {
 				return new Promise((resolve, reject) => {
@@ -50,11 +45,8 @@ module.exports = {
 				mentionSubs += ('<@' + element.userid + '> ');
 			});
 
-
 			db.close((err) => {
-				if (err) {
-				  console.error(err.message);
-				}
+				if (err) console.error(err.message);
 				console.log('Close the database connection.');
 			});
 			
@@ -77,42 +69,19 @@ module.exports = {
 					{ name: 'Time:', value: `<t:${epochTime}>`},
 					{ name: 'Countdown:', value: `Starting in ${countdownHour}H ${countdownMinute}M`},
 					{ name: '__Yes:__', value: 'Empty' , inline: true},
-					{ name: '__No:__', value: 'Empty', inline: true },
-					)
+					{ name: '__No:__', value: 'Empty', inline: true })
 				.setFooter({ text:'Server IP: connect crayon.csgo.fr:27015; password fun', iconURL: 'https://i.imgur.com/nuEpvJd.png'})
 
 			
 			// Buttons
-			var buttons = new MessageActionRow()
-				.addComponents(
-					new MessageButton()
-						.setCustomId('yes')
-						.setLabel('Yes')
-						.setStyle('SUCCESS')
-						.setEmoji('👍'),
+			var buttons = new MessageActionRow().addComponents(
+				new MessageButton().setCustomId('yes').setLabel('Yes').setStyle('SUCCESS').setEmoji('👍'),
+				new MessageButton().setCustomId('maybe').setLabel('Maybe').setStyle('PRIMARY').setEmoji('🔸'),
+				new MessageButton().setCustomId('no').setLabel('No').setStyle('DANGER').setEmoji('👎'));
 
-					new MessageButton()
-						.setCustomId('maybe')
-						.setLabel('Maybe')
-						.setStyle('PRIMARY')
-						.setEmoji('🔸'),
-
-					new MessageButton()
-						.setCustomId('no')
-						.setLabel('No')
-						.setStyle('DANGER')
-						.setEmoji('👎'),
-				);
-
-			await interaction.reply(
-				{
-				content: mentionSubs,
-				embeds: [mainEmbed], 
-				components: [buttons]
-			});
-
-
-		} else {
+			await interaction.reply({content: mentionSubs, embeds: [mainEmbed], components: [buttons]});
+		}
+		 else {
 			// If user is not admin
 			var deniedEmbed = new MessageEmbed().setColor('0xFF6F00').setTitle('Permission Denied').setDescription('Must be an Admin')
 			await interaction.reply({ embeds: [deniedEmbed], ephemeral: true })
@@ -124,26 +93,27 @@ module.exports = {
 		timeScheduled = interaction.options.getString('time');	//Getting String for timeScheduled posted in Time embed.
 
 		let reply = await interaction.fetchReply()
-
 		let doingUpdate = false;
+		let maybeMsg1 = true;
+		let maybeMsg2 = true;
 
 		const doUpdate = async () => {
-			if (doingUpdate)
-			{// doing update, try again later
+			if (doingUpdate) {// doing update, try again later
 				setTimeout(doUpdate, 1000);
-				console.log('Skipping update')
+				console.log('Skipping update');
 				return;
 			}
 
 			const [, , totalMinutes,] = getCountdown(timeScheduled)
 			
-			if (totalMinutes == 60) {
+			if ((totalMinutes <= 60) && (maybeMsg1)) {
 				let maybeString = ""
 				for (element in maybeMention) {maybeString += (`<@${maybeMention[element]}> `)}
-				if (maybeString != "") await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send(`Select Yes or No for the 10 man:\n${maybeString}`);
+				if (maybeString != "") await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send(`Select Yes or No for the 10 man: ${maybeString}`);
+				maybeMsg1 = false;
 			}
 
-			if (totalMinutes == 30) {
+			if ((totalMinutes <= 30) && (maybeMsg2)) {
 				let maybeString = ""
 
 				function checkMaybe(yesEntry) {
@@ -155,7 +125,6 @@ module.exports = {
 					return false;
 				}
 
-				let i = 0;
 				do {
 					for (element in yesEntry) {
 						if ((yesEntry[element]).includes('🔸')) {
@@ -168,37 +137,31 @@ module.exports = {
 					}
 				} while (checkMaybe(yesEntry));
 
-
 				for (element in maybeMention) {maybeString += (`<@${maybeMention[element]}> `)}
-				if (maybeString != "") await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send(`Moved to No:\n${maybeString}`);
+				if (maybeString != "") await interaction.guild.channels.cache.get(`${secretinfo.channelID}`).send(`Moved to No: ${maybeString}`);
+				maybeMsg2 = false;
 			}
 
 			let [yesString, noString] = createString(yesEntry, noEntry); //array size
 			let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry);
 			let buttons = createButton();
 
-			await reply.edit({
-				embeds: [mainEmbed],
-				components: [buttons],
-			});
+			await reply.edit({embeds: [mainEmbed],components: [buttons]});
 
-			if (totalMinutes >= 0) // stop updating when time 
-				setTimeout(doUpdate, 60000);
-			else
-				console.log('Update stopped')
+			if (totalMinutes >= -20) setTimeout(doUpdate, 60000); // stop updating when time 
+			else console.log("Ending Update on Schedule Message");
 		}
 		setTimeout(doUpdate, 60000);
 
 		const totalMinutesNum = totalMinutes;
 		const interactionTimeout = (30 + totalMinutesNum) * 60 * 1000;
-		const collector = reply.createMessageComponentCollector({
-			time: interactionTimeout,
-		});
+		const collector = reply.createMessageComponentCollector({time: interactionTimeout});
 
 		collector.on('collect', async i => {
+
+			doingUpdate = true;
 			
 			user = (i.user.username);
-			doingUpdate = true;
 			buttonClicked = (i.customId);
 
 			user = assignPriority(user);
@@ -206,13 +169,11 @@ module.exports = {
 			if (buttonClicked === "yes" ) {
 				await i.deferUpdate();
 
-				if (yesEntry.indexOf(user) > -1) {
-					return
-				}
+				if (yesEntry.indexOf(user) > -1) return;
 
 				else if (yesEntry.indexOf(user + " 🔸") > -1) {
 					yesEntry[yesEntry.indexOf(user + " 🔸")] = user;
-					maybeMention.pop(i.user.id);
+					if ((maybeMention.indexOf(i.user.id)) !== -1) maybeMention.splice((maybeMention.indexOf(i.user.id)), 1);
 				}
 
 				else if (noEntry.indexOf(user) > -1) {
@@ -220,19 +181,14 @@ module.exports = {
 					yesEntry.push(user);
 				}
 
-				else {
-					yesEntry.push(user);
-				}
+				else yesEntry.push(user);
 
 				
 				let [yesString, noString] = createString(yesEntry, noEntry); //array size
 				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton(); 
 
-				await i.editReply({
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
+				await i.editReply({embeds: [mainEmbed], components: [buttons]});
 			}
 
 			else if (buttonClicked === "maybe" ) {
@@ -243,9 +199,7 @@ module.exports = {
 					maybeMention.push(i.user.id);
 				}
 
-				else if (yesEntry.indexOf(user + " 🔸") > -1) {
-					return
-				}
+				else if (yesEntry.indexOf(user + " 🔸") > -1) return;
 
 				else if (noEntry.indexOf(user) > -1) {
 					noEntry.splice(noEntry.indexOf(user), 1);
@@ -258,16 +212,11 @@ module.exports = {
 					maybeMention.push(i.user.id);
 				}
 
-				
-
 				let [yesString, noString] = createString(yesEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton();
 
-				await i.editReply({
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
+				await i.editReply({embeds: [mainEmbed], components: [buttons]});
 			}
 
 			else if (buttonClicked === "no") {
@@ -281,65 +230,20 @@ module.exports = {
 				else if (yesEntry.indexOf(user + " 🔸") > -1) {
 					yesEntry.splice(yesEntry.indexOf(user + " 🔸"), 1);
 					noEntry.push(user);
-					maybeMention.pop(i.user.id);
+					if ((maybeMention.indexOf(i.user.id)) !== -1) maybeMention.splice((maybeMention.indexOf(i.user.id)), 1);
 				}
 
-				else if (noEntry.indexOf(user) > -1) {
-					return
-				}
-
-				else {
-					noEntry.push(user);
-				}
-
-				
+				else if (noEntry.indexOf(user) > -1) return;
+				else noEntry.push(user);
 
 				let [yesString, noString] = createString(yesEntry, noEntry);
 				let mainEmbed = createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry); 
 				let buttons = createButton(); 
 
-				await i.editReply({
-					embeds: [mainEmbed], 
-					components: [buttons],
-				});
+				await i.editReply({embeds: [mainEmbed], components: [buttons]});
 			}
-
 			doingUpdate = false;
 		});;
-
-
-		// 30 Minutes after Scheduled time has passed.
-		collector.on('end', async i => {
-			console.log("Ended Schedule Message");
-
-			var buttons = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('yes')
-					.setLabel('Yes')
-					.setStyle('SUCCESS')
-					.setEmoji('👍')
-					.setDisabled(true),
-
-				new MessageButton()
-					.setCustomId('maybe')
-					.setLabel('Maybe')
-					.setStyle('PRIMARY')
-					.setEmoji('🤷')
-					.setDisabled(true),
-
-				new MessageButton()
-					.setCustomId('no')
-					.setLabel('No')
-					.setStyle('DANGER')
-					.setEmoji('👎')
-					.setDisabled(true),
-			);
-
-			await interaction.editReply({
-				components: [buttons]
-			});
-		});
 	},
 };
 
@@ -349,69 +253,48 @@ function createEmbed(yesString, noString, timeScheduled, yesEntry, noEntry) {
 	let [countdownHour, countdownMinute, totalMinutes, epochTime] = getCountdown(timeScheduled);
 
 	if (totalMinutes > 0) {
-		var countdownOutput = (`Starting in ${countdownHour}H ${countdownMinute}M`);
+		if (countdownHour == 0) {var countdownOutput = (`Starting in ${countdownMinute} Minutes`);}
+		else {var countdownOutput = (`Starting in ${countdownHour}H ${countdownMinute}M`);}
 	}
-	else {
-		var countdownOutput = (`Started!`);
-	}
+	else {var countdownOutput = (`Started!`);}
 
 	var mainEmbed = new MessageEmbed()
-	.setColor('0xFF6F00')
-	.setTitle('10 Man')
-	.setURL('https://10man.commoncrayon.com/')
-	.setDescription('Join a 10 Man!')
-	.addFields(
-		{ name: 'Time:', value: `<t:${epochTime}>` },
-		{ name: 'Countdown:', value: countdownOutput},
-		{ name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
-		{ name: `__No(${noEntry.length}):__`, value: noString, inline: true },
-		)
-	.setFooter({ text:'Server IP: connect crayon.csgo.fr:27015; password fun', iconURL: 'https://i.imgur.com/nuEpvJd.png'})
+		.setColor('0xFF6F00')
+		.setTitle('10 Man')
+		.setURL('https://10man.commoncrayon.com/')
+		.setDescription('Join a 10 Man!')
+		.addFields(
+			{ name: 'Time:', value: `<t:${epochTime}>` },
+			{ name: 'Countdown:', value: countdownOutput},
+			{ name: `__Yes(${yesEntry.length}):__`, value: yesString, inline: true},
+			{ name: `__No(${noEntry.length}):__`, value: noString, inline: true })
+		.setFooter({ text:'Server IP: connect crayon.csgo.fr:27015; password fun', iconURL: 'https://i.imgur.com/nuEpvJd.png'});
 	return mainEmbed;
 }
 
 
 function createButton() {
-
 	const [, , totalMinutes,] = getCountdown(timeScheduled)
 
-	if (totalMinutes <= 60 ) {
-		var buttons = new MessageActionRow()
-		.addComponents(
-			new MessageButton()
-				.setCustomId('yes')
-				.setLabel('Yes')
-				.setStyle('SUCCESS')
-				.setEmoji('👍'),
+	if (totalMinutes > 60 ) {
+		var buttons = new MessageActionRow().addComponents(
+			new MessageButton().setCustomId('yes').setLabel('Yes').setStyle('SUCCESS').setEmoji('👍'),
+			new MessageButton().setCustomId('maybe').setLabel('Maybe').setStyle('PRIMARY').setEmoji('🔸'),
+			new MessageButton().setCustomId('no').setLabel('No').setStyle('DANGER').setEmoji('👎'));
+	}
 
+	else if (totalMinutes > -15) {
+		var buttons = new MessageActionRow().addComponents(
+			new MessageButton().setCustomId('yes').setLabel('Yes').setStyle('SUCCESS').setEmoji('👍'),
+			new MessageButton().setCustomId('maybe').setLabel('Maybe').setStyle('PRIMARY').setEmoji('🔸').setDisabled(true),
+			new MessageButton().setCustomId('no').setLabel('No').setStyle('DANGER').setEmoji('👎'));
+	}
 
-			new MessageButton()
-				.setCustomId('no')
-				.setLabel('No')
-				.setStyle('DANGER')
-				.setEmoji('👎'),
-		);
-	} else {
-		var buttons = new MessageActionRow()
-		.addComponents(
-			new MessageButton()
-				.setCustomId('yes')
-				.setLabel('Yes')
-				.setStyle('SUCCESS')
-				.setEmoji('👍'),
-
-			new MessageButton()
-				.setCustomId('maybe')
-				.setLabel('Maybe')
-				.setStyle('PRIMARY')
-				.setEmoji('🔸'),
-
-			new MessageButton()
-				.setCustomId('no')
-				.setLabel('No')
-				.setStyle('DANGER')
-				.setEmoji('👎'),
-		);
+	else {
+		var buttons = new MessageActionRow().addComponents(
+			new MessageButton().setCustomId('yes').setLabel('Yes').setStyle('SUCCESS').setEmoji('👍').setDisabled(true),
+			new MessageButton().setCustomId('maybe').setLabel('Maybe').setStyle('PRIMARY').setEmoji('🔸').setDisabled(true),
+			new MessageButton().setCustomId('no').setLabel('No').setStyle('DANGER').setEmoji('👎').setDisabled(true));
 	}
 	return buttons;
 }
@@ -419,9 +302,7 @@ function createButton() {
 
 function createString(yesEntry, noEntry) {
 	// For Yes
-	if (yesEntry.length == 0){
-		yesString = "Empty";
-	}
+	if (yesEntry.length == 0) yesString = "Empty";
 	else {
 		yesString = "";
 		for (var l = 0; l < yesEntry.length; l++) {
@@ -436,9 +317,7 @@ function createString(yesEntry, noEntry) {
 	}
 
 	// For No
-	if (noEntry.length == 0){
-		noString = "Empty";
-	}
+	if (noEntry.length == 0) noString = "Empty";
 	else {
 		noString = "";
 		for (var l = 0; l < noEntry.length; l++) {
@@ -467,7 +346,6 @@ function getCountdown(timeScheduled) {
     
     totalMinutes = (scheduledMinutes - integerCET);
     
-    
     countdownHour = Math.floor(totalMinutes / 60);
     countdownMinute = (totalMinutes - countdownHour*60);
 
@@ -494,14 +372,15 @@ function assignPriority(user) {
 		"ShadowPoor",
 		"Rik",
 		"Jeppi",
+		"Mini",
+		"Porsche",
+		"NinjaM0nk",
 		"CommonCrayon",
 		"Thisted",
 	]; 
 
 	for (var i = 0; i < priority.length; i++) {
-		if (user === priority[i]){
-			user = "🎗️" + user;
-		}
+		if (user === priority[i]) {user = "🎗️" + user};
 	}
 	return user;
 }

@@ -1,8 +1,8 @@
 const fs = require('fs');
 let idsJson = JSON.parse(fs.readFileSync('events/voiceids.json'));
 
-let aList = [];
-let bList = [];
+let aList = new Array;
+let bList = new Array;
 
 
 module.exports = {
@@ -10,19 +10,17 @@ module.exports = {
 	async execute(oldState, newState) {
 
 		// Procedures for Counter-Strike Voice Channel - 832598037598961684
-		if (newState.channelId == (`${idsJson.ids.voice10man}`)) {
-			aList.push(newState.id);
-		}
+		if (newState.channelId == (`${idsJson.ids.voice10man}`)) aList.push(newState.id);
+
 		if (oldState.channelId == (`${idsJson.ids.voice10man}`)) {
-			aList.pop(oldState.id);
+			if ((aList.indexOf(oldState.id)) !== -1) aList.splice((aList.indexOf(oldState.id)), 1);
 		}
 
 		// Procedures for 10-man Voice Channel - 843598844758982666
-		if (newState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) {
-			bList.push(newState.id);
-		}
+		if (newState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) bList.push(newState.id);
+
 		if (oldState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) {
-			bList.pop(oldState.id);
+			if ((bList.indexOf(oldState.id)) !== -1) aList.splice((bList.indexOf(oldState.id)), 1);
 		}
 
 		const content = "List A and B:\n".concat(aList.concat("\n".concat(bList)));
