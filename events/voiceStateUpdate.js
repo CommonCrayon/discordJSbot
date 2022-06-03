@@ -20,13 +20,8 @@ module.exports = {
 		if (newState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) bList.push(newState.id);
 
 		if (oldState.channelId == (`${idsJson.ids.voiceCounterStrike}`)) {
-			if ((bList.indexOf(oldState.id)) !== -1) aList.splice((bList.indexOf(oldState.id)), 1);
+			if ((bList.indexOf(oldState.id)) !== -1) bList.splice((bList.indexOf(oldState.id)), 1);
 		}
-
-		const content = "List A and B:\n".concat(aList.concat("\n".concat(bList)));
-		fs.appendFile('./log.txt', "\n".concat(content), function (err) {
-			if (err) return console.log(err);
-		});
 	},
 	getAList: () => {return aList;},
 	getBList: () => {return bList;},

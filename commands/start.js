@@ -98,13 +98,14 @@ module.exports = {
     
                                     var matchEmbed = new MessageEmbed()
                                         .setColor('0xFF6F00')
-                                        .setTitle(`\u200b${mapName}`)
+                                        .setTitle(`10 Man: ${mapName}`)
                                         .setURL(mapURL)
                                         .addFields(
                                             { name: 'Team A:', value: `\u200b${aListString}`, inline: true},
                                             { name: 'Team B:', value: `\u200b${bListString}`, inline: true},
                                             )
-                                        .setImage(mapImage);
+                                        .setImage(mapImage)
+                                        .setTimestamp();
                                     
                                     
                                     await sleep(10000);
