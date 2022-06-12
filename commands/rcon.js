@@ -47,13 +47,9 @@ module.exports = {
                     console.log("Error: " + err);
 
                 }).on('end', async function() {
-                    console.log("Ended: " + content);
-
-
+                    console.log("Ended Rcon");
             });
-    
             conn.connect();
-            conn.emit('end');
 
             async function sendDelayMsg() {
                 await sleep(3000);
@@ -65,11 +61,9 @@ module.exports = {
                         .setTitle('Successfully sent command: ' + command)
                         .setDescription(`\u200b${content}`);
     
-                    await interaction.editReply( { embeds: [rconEmbed]})
+                    await interaction.editReply({ embeds: [rconEmbed]});
                     
-                } catch (error) {
-                    console.log(error);
-                }
+                } catch (error) {console.log(error);}
             }
             
             await sendDelayMsg();
@@ -77,16 +71,8 @@ module.exports = {
         
         } else {
             // Missing Perms 
-            var deniedEmbed = new MessageEmbed()
-                .setColor('0xFF6F00')
-                .setTitle('Permission Denied')
-                .setDescription('Must be an Admin')
-
-            await interaction.reply(
-                {
-                embeds: [deniedEmbed], 
-                ephemeral: true 
-            })
+            var deniedEmbed = new MessageEmbed().setColor('0xFF6F00').setTitle('Permission Denied').setDescription('Must be an Admin');
+            await interaction.reply({embeds: [deniedEmbed], ephemeral: true });
         }
 	},
 };

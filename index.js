@@ -39,9 +39,9 @@ client.on('interactionCreate', async interaction => {
 
 
 //On Discord Api Error 
-process.on('unhandledRejection', error => {
-	console.error(error);
-	fs.appendFile('log.txt', ('\n'.concat(error)), function (err) {
+process.on('unhandledRejection', (reason, promise) => {
+	console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+	fs.appendFile('log.txt', ('\n'.concat('Unhandled Rejection at:' + promise + '\nreason:' + reason)), function (err) {
 		if (err) return console.log(err);
 	});
 });

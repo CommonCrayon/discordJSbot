@@ -27,23 +27,24 @@ module.exports = {
         if (adminCheck) {
             console.log('Commencing /awplimit');
 
-            // Executing wingman config
-            conn.on('auth', function() {
+            conn.once('auth', function() {
                 conn.send(`sm_restrict awp ${number} t `);
                 conn.send(`sm_restrict awp ${number} ct `);
 
-                }).on('error', function(err) {
-                console.log("Awp Limit Command Error: " + err);
-            });
-                    
-            conn.connect();
+                }).on('response', function(str) {
+                    console.log("Response: " + str);
 
+                }).on('error', function(err) {
+                    console.log("Error: " + err);
+
+                }).on('end', function() {
+                    console.log("Connection closed");
+            });
+            conn.connect();
+              
             // Send Embed 
             var startEmbed = new MessageEmbed().setColor('0xFF6F00').setTitle(`Set Awp Limit to: ${number}`);
-            await interaction.reply({ embeds: [startEmbed]})
-
-
-            conn.emit('end');
+            await interaction.reply({ embeds: [startEmbed]});
             console.log('Completed /awplimit');
         } 
         else {

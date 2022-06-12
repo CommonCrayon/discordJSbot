@@ -7,6 +7,20 @@ const request = require('request');
 let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
 const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
+// Sleep Function
+function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+}
+
+let wid = {
+    set current(name) {
+      this.log = (name);
+    },
+    log: String
+  }
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('map')
@@ -27,15 +41,21 @@ module.exports = {
         
         if (adminCheck) {
             console.log("Commencing /map " + workshopid);
-            
-            conn.on('auth', function() {
-                    conn.send(('host_workshop_map ').concat(workshopid));
+
+            conn.once('auth', function() {
+                conn.send(('host_workshop_map ').concat(workshopid));
+
+                }).on('response', function(str) {
+                    console.log("Response: " + str);
 
                 }).on('error', function(err) {
                     console.log("Error: " + err);
-            });
 
+                }).on('end', function() {
+                    console.log("Connection closed");
+            });
             conn.connect();
+
 
             try {
                 var options = {
@@ -65,45 +85,27 @@ module.exports = {
                             .setImage(mapImage)
                             .setFooter({ text: `Workshop ID: ${workshopid}` });
                         
-        
-                        await interaction.reply(
-                            { embeds: [mapEmbed],
-                        })
+                        await interaction.reply({ embeds: [mapEmbed],})
 
-                    } catch (error) {
-                        console.log("request():\n" + error)
-                    }
+                    } catch (error) {console.log("request():\n" + error);}
                 });
 
             } catch (error) {
-
                 console.log(error);
-
                 var mapEmbed = new MessageEmbed()
                     .setColor('0xFF6F00')
                     .setTitle('Successfully Changed Map to: ' + workshopid)
-                    .setURL('https://steamcommunity.com/sharedfiles/filedetails/?id='.concat(workshopid))
+                    .setURL('https://steamcommunity.com/sharedfiles/filedetails/?id='.concat(workshopid));
 
-                await interaction.reply(
-                    { embeds: [mapEmbed],
-                })
+                await interaction.reply({ embeds: [mapEmbed],})
             }
 
-            conn.emit('end');
             console.log('Completed /map');
         
         } else {
             // Missing Perms 
-            var deniedEmbed = new MessageEmbed()
-                .setColor('0xFF6F00')
-                .setTitle('Permission Denied')
-                .setDescription('Must be an Admin')
-
-            await interaction.reply(
-                {
-                embeds: [deniedEmbed], 
-                ephemeral: true 
-            })
+            const deniedEmbed = new MessageEmbed().setColor('0xFF6F00').setTitle('Permission Denied').setDescription('Must be an Admin');
+            await interaction.reply({embeds: [deniedEmbed], ephemeral: true });
         }
 	},
 };
