@@ -4,7 +4,6 @@ var Rcon = require('rcon');
 const fs = require('fs');
 
 let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
-const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,20 +23,19 @@ module.exports = {
         if (adminCheck) {
             console.log('Commencing /wingman');
 
+            const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
+
             // Executing wingman config
             conn.on('auth', function() {
                 conn.send("exec gamemode_competitive2v2");
-
-                }).on('error', function(err) {
-                console.log("Wingman cfg Command Error: " + err);
-            });
-
-            // Starting the game
-            conn.on('auth', function() {
                 conn.send("mp_warmup_end");
+                conn.disconnect();
 
                 }).on('error', function(err) {
-                console.log("Warmup Command Error: " + err);
+                    console.log("Wingman cfg Command Error: " + err);
+
+                }).on('end', function() {
+                    console.log("Ended wingman");
             });
             
             conn.connect();

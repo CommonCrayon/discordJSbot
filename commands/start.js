@@ -6,7 +6,6 @@ const voice = require('../events/voiceStateUpdate');
 const request = require('request');
 
 let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
-const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
 // Sleep Function
 function sleep(ms) {
@@ -20,7 +19,7 @@ let wid = {
       this.log = (name);
     },
     log: String
-  }
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -41,13 +40,13 @@ module.exports = {
         if (adminCheck) {
             console.log('Commencing /start');
 
+            const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
+
             // GET MAP NAME AND THUMBNAIL
             conn.on('auth', function() {
                 conn.send("mp_warmup_end");
                 conn.send("status");
-                
-                let dateTime = new Date();
-                console.log(dateTime);
+                conn.disconnect();
 
                 }).on('response', function(str) {
                     let status = str.split("\n");
@@ -55,12 +54,12 @@ module.exports = {
                     let workshopid = mapStr.split("/")[1];
 
                     if (workshopid != undefined) wid.current = workshopid;
-                    
-
-                    console.log("wid: " + wid.log);
 
                 }).on('error', function(err) {
-                console.log("MatchEmbed Error: " + err);
+                    console.log("Error: " + err);
+
+                }).on('end', function() {
+                    console.log("Ended start");
             });
 
             conn.connect();

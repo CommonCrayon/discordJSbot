@@ -4,7 +4,6 @@ var Rcon = require('rcon');
 const fs = require('fs')
 
 let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
-const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
 // Sleep Function
 function sleep(ms) {
@@ -36,9 +35,12 @@ module.exports = {
             await interaction.deferReply();
 
             let content = '';
+            const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
            
             conn.on('auth', function() {
                     conn.send(command);
+                    conn.disconnect();
+                    
                 }).on('response', async function(str) {
                     content = content.concat(str);
                     console.log("Response: " + content);

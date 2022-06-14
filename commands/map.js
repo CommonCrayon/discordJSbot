@@ -5,14 +5,6 @@ const fs = require('fs')
 const request = require('request');
 
 let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
-const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
-
-// Sleep Function
-function sleep(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-}
 
 let wid = {
     set current(name) {
@@ -42,20 +34,19 @@ module.exports = {
         if (adminCheck) {
             console.log("Commencing /map " + workshopid);
 
+            const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
+
             conn.once('auth', function() {
                 conn.send(('host_workshop_map ').concat(workshopid));
-
-                }).on('response', function(str) {
-                    console.log("Response: " + str);
+                conn.disconnect();
 
                 }).on('error', function(err) {
                     console.log("Error: " + err);
 
                 }).on('end', function() {
-                    console.log("Connection closed");
+                    console.log("Ended map");    
             });
             conn.connect();
-
 
             try {
                 var options = {

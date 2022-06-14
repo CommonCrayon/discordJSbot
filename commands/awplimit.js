@@ -4,7 +4,6 @@ var Rcon = require('rcon');
 const fs = require('fs');
 
 let secretinfo = JSON.parse(fs.readFileSync('commands/database/secretinfo.json'));
-const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -27,18 +26,18 @@ module.exports = {
         if (adminCheck) {
             console.log('Commencing /awplimit');
 
+            const conn = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
+
             conn.once('auth', function() {
                 conn.send(`sm_restrict awp ${number} t `);
                 conn.send(`sm_restrict awp ${number} ct `);
-
-                }).on('response', function(str) {
-                    console.log("Response: " + str);
+                conn.disconnect();
 
                 }).on('error', function(err) {
                     console.log("Error: " + err);
 
                 }).on('end', function() {
-                    console.log("Connection closed");
+                    console.log("Connection closed"); 
             });
             conn.connect();
               
