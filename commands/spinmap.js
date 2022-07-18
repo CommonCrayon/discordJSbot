@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 
 module.exports = {
 	data: new SlashCommandBuilder()

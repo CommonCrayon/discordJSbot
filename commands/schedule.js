@@ -366,7 +366,7 @@ function assignPriority(user) {
 		"QueeN",
 		"DashBash",
 		"Royal Bacon",
-		"<@431743926974808076>", // k0vac
+		"k0vac",
 		"Amajha",
 		"CaJeB3",
 		"ShadowPoor",
