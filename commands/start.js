@@ -121,7 +121,7 @@ module.exports = {
             }
 
             // LOOP FOR 30 SECONDS FOR GAME MATCH SCORES
-            let timerId = setInterval(() => {
+            let timerId = setTimeout(function tick() {
                 
                 // Get match score from the server
                 const connectionScore = new Rcon((secretinfo.server.serverIP), 27015, (secretinfo.server.serverPassword));
@@ -249,19 +249,25 @@ module.exports = {
 
                     if (maxRounds == (scoreCT + scoreT)) {
                         console.log("Reached Max Rounds & Stopped interval");
-                        clearInterval(timerId);
                     }
-                    if (((maxRounds/2)+1) == scoreCT || ((maxRounds/2)+1) == scoreT) {
+                    else if (((maxRounds/2)+1) == scoreCT || ((maxRounds/2)+1) == scoreT) {
                         console.log("Reached Round Victory & Stopped interval");
-                        clearInterval(timerId);
                     }
+
+                    else if ((scoreT == (maxRounds/2)) || (scoreCT == (maxRounds/2))) {
+                        console.log("Shortened interval to 10 seconds: " + scoreCT + " - " + scoreT)
+                        timerId = setTimeout(tick, 10000); 
+                    }
+
+                    else {
+                        console.log("30 Second Interval: " + scoreCT + " - " + scoreT);
+                        timerId = setTimeout(tick, 30000); 
+                    }
+                    
                 }
                 sendDelayMsg();
 
             }, 30000);
-            setTimeout(() => { clearInterval(timerId); }, 3600000);
-
-
             console.log('Completed /start');
         } 
         else {
